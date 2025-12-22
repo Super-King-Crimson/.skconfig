@@ -123,6 +123,7 @@ if ! shopt -oq posix; then
   fi
 fi
 
+# Path aliases
 export dt=$HOME/Desktop
 export dl=$HOME/Downloads
 export pc=$HOME/Pictures
@@ -134,9 +135,11 @@ export path="$HOME/.local/bin"
 export prj="$HOME/Documents/Projects"
 export nts="$HOME/Desktop/notes"
 
+# idek
 shopt -u cdable_vars
 shopt -s direxpand
 
+# aliases
 alias skconfig='git --git-dir=$HOME/.skconfig/ --work-tree=$HOME'
 alias ptouch="install /dev/null -m"
 alias gdt="godot"
@@ -146,3 +149,5 @@ alias ilab-start="sshfs rnd61@ilab.cs.rutgers.edu: ~/Desktop/ilab && cd ~/Deskto
 alias ilab-end="cd ~ && fusermount3 -u ~/Desktop/ilab/"
 alias ilab-login="ssh rnd61@ilab.cs.rutgers.edu"
 alias ahk-start="nohup /home/skc/Binaries/startup.sh > /dev/null 2>&1 &"
+
+export PATH="$HOME/.local/bin:$PATH"

@@ -1,0 +1,19 @@
+{
+ "patterns": [
+  {
+   "pattern": "https://keep.google.com/u/0/",
+   "isRegex": false,
+   "enabled": true
+  },
+  {
+   "pattern": "https://tasks.google.com/tasks/",
+   "isRegex": false,
+   "enabled": true
+  },
+  {
+   "pattern": "https://calendar.google.com/calendar/.*",
+   "isRegex": true,
+   "enabled": true
+  }
+ ]
+}
