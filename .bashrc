@@ -118,31 +118,96 @@ if ! shopt -oq posix; then
   fi
 fi
 
-# Path aliases and configs
+# Custom commands
+# Encrypt a folder into a symmetrical GPG archive
+encrypt_archive_symmetrical_gpg() {
+	local GPG_OPTS=""
+	local OPTIND=1  # Reset getopts index for function calls
+	
+	# Parse flags
+	while getopts "f" opt; do
+		case "$opt" in
+			f) GPG_OPTS="--no-symkey-cache" ;;
+			*) echo "Usage: enc-sym [-f] <folder_path>"; return 1 ;;
+		esac
+	done
+	shift $((OPTIND-1)) # Remove the flags from the argument list
+
+	local folder_path="$1"
+	local output_name=$(basename "$folder_path")
+	if [[ -z "$folder_path" ]]; then
+		echo "Usage: enc-sym [-f] <folder_path>"
+		return 1
+	fi
+
+	# -c uses symmetric encryption
+	# --pbkdf2 specifies the password-based key derivation function
+	tar -cf - "$folder_path" | gpg $GPG_OPTS -c -o "$output_name.tar.gpg"
+	
+	local status_tar=${PIPESTATUS[0]}
+	local status_gpg=${PIPESTATUS[1]}
+	if [[ $status_tar -eq 0 && $status_gpg -eq 0 ]]; then
+		echo "Archive encrypted successfully as $output_name.tar.gpg."
+		echo "Please delete the original directory."
+	fi
+}
+alias enc-sym='encrypt_archive_symmetrical_gpg'
+
+# Decrypt and extract a symmetrical GPG archive
+decrypt_extract_symmetrical_gpg() {
+	local GPG_OPTS=""
+	local OPTIND=1
+
+	# Parse flags
+	while getopts "f" opt; do
+		case "$opt" in
+			f) GPG_OPTS="--no-symkey-cache" ;;
+			*) echo "Usage: dec-sym [-f] <encrypted_data_path>"; return 1 ;;
+		esac
+	done
+	shift $((OPTIND-1))
+
+	local encrypted_data_path="$1"
+	if [[ -z "encrypted_data_path" ]]; then
+		echo "Usage: dec-sym [-f] <encrypted_data_path>"
+		return 1
+	fi
+	
+	# -d decrypts the file and pipes the stdout directly to tar
+	gpg $GPG_OPTS -d "$encrypted_data_path" | tar -xf -
+	
+	local status_gpg=${PIPESTATUS[0]}
+    local status_tar=${PIPESTATUS[1]}
+	if [[ $status_gpg -eq 0 && $status_tar -eq 0 ]]; then
+		echo "Archive decrypted and extracted to current directory."
+		echo "Remember to re-encrypt this file after you are done."
+	fi
+}
+alias dec-sym='decrypt_extract_symmetrical_gpg'
+
+# Set defaults
 export EDITOR="nvim"
 export VISUAL="$EDITOR"
 
-export PATH="$HOME/.local/bin:$PATH"
-
-export dt=$HOME/Desktop
+# Shortcuts
+export dt=$HOME/Destop
 export dl=$HOME/Downloads
 export dc=$HOME/Documents
 export pc=$HOME/Pictures
 export vd=$HOME/Videos
 export as=$HOME/Assets
 export bn=$HOME/Binaries
-export pth="$HOME/.local/bin"
+export bin="$HOME/.local/bin"
 export prj="$HOME/Documents/Projects"
 export nts="$HOME/Desktop/notes"
 
-# idek
+# Shell configuration
 shopt -u cdable_vars
 shopt -s direxpand
 
-# aliases
-alias ll='ls -alF'
+# Simple aliases
+alias ll='ls -alFh'
 alias la='ls -A'
-alias lal='ls -Alh'
 alias l='ls -CF'
 
 alias skconfig='git --git-dir=$HOME/.skconfig/ --work-tree=$HOME'
@@ -154,3 +219,6 @@ alias ahk-start="nohup ahk /home/skc/Binaries/startup/bin/ahk-setup.sh > /dev/nu
 if [[ -z "$TMUX" ]]; then
     tmux attach-session -t default || tmux new-session -s default
 fi
+
+# PATH modification
+export PATH="$HOME/.local/bin:$PATH"
