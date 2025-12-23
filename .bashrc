@@ -215,10 +215,5 @@ alias ptouch="install /dev/null -m"
 alias gdt="godot"
 alias ahk-start="nohup ahk /home/skc/Binaries/startup/bin/ahk-setup.sh > /dev/null 2>&1 &"
 
-# If not already in a tmux session, start or attach to one
-if [[ -z "$TMUX" ]]; then
-    tmux attach-session -t default || tmux new-session -s default
-fi
-
 # PATH modification
 export PATH="$HOME/.local/bin:$PATH"
