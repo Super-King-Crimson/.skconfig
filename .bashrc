@@ -126,12 +126,12 @@ fi
 # Path aliases
 export dt=$HOME/Desktop
 export dl=$HOME/Downloads
+export dc=$HOME/Documents
 export pc=$HOME/Pictures
 export vd=$HOME/Videos
 export as=$HOME/Assets
 export bn=$HOME/Binaries
-export ilab=$HOME/Desktop/ilab
-export path="$HOME/.local/bin"
+export pth="$HOME/.local/bin"
 export prj="$HOME/Documents/Projects"
 export nts="$HOME/Desktop/notes"
 
@@ -145,9 +145,6 @@ alias ptouch="install /dev/null -m"
 alias gdt="godot"
 alias config-reload="source ~/.bashrc"
 alias config-edit="nvim ~/.bashrc"
-alias ilab-start="sshfs rnd61@ilab.cs.rutgers.edu: ~/Desktop/ilab && cd ~/Desktop/ilab/Documents/comp_arch"
-alias ilab-end="cd ~ && fusermount3 -u ~/Desktop/ilab/"
-alias ilab-login="ssh rnd61@ilab.cs.rutgers.edu"
-alias ahk-start="nohup /home/skc/Binaries/startup.sh > /dev/null 2>&1 &"
+alias ahk-start="nohup ahk /home/skc/Binaries/startup/bin/ahk-setup.sh > /dev/null 2>&1 &"
 
 export PATH="$HOME/.local/bin:$PATH"
