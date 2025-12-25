@@ -190,7 +190,7 @@ export EDITOR="nvim"
 export VISUAL="$EDITOR"
 
 # Shortcuts
-export dt=$HOME/Destop
+export dt=$HOME/Desktop
 export dl=$HOME/Downloads
 export dc=$HOME/Documents
 export pc=$HOME/Pictures
