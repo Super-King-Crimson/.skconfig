@@ -1,13 +1,17 @@
 -- Prereqs --
+
 -- Set this to make lazy do what its supposed to do
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
-vim.g.have_nerd_font = false
+vim.g.have_nerd_font = true
 
 -- End Prereqs --
 
 -- Options --
+-- 12/28/25
+vim.o.wrap = false
+
 -- 12/27/25
 -- For kickstart
 vim.o.updatetime = 250
@@ -16,8 +20,9 @@ vim.o.updatetime = 250
 -- Since Alt is esc we're gonna try to make this seamless
 -- If the keys aren't pressed at the same time,
 -- they're not recorded as the same keypress
+-- or ig nevermind then
 vim.o.timeout = true
-vim.o.timeoutlen = 0
+vim.o.timeoutlen = 500
 
 -- 12/23/25
 -- case-insensitive search
@@ -25,7 +30,6 @@ vim.o.smartcase = false
 vim.o.ignorecase = true
 
 --12/16/25
-
 -- makes vim stop the search at the top/bottom of a file
 vim.o.wrapscan = false
 
@@ -33,7 +37,6 @@ vim.o.wrapscan = false
 vim.o.incsearch = true
 
 vim.o.number = true
-vim.o.relativenumber = true
 
 vim.o.tabstop = 8
 vim.o.shiftwidth = 4
@@ -100,7 +103,7 @@ vim.o.confirm = true
 -- /n = store n recently used search pattern items
 -- :n = store n most recently executed commands
 -- @n = store n most recent items in input line
--- h  = highlight search does not work in a .shada file 
+-- h  = highlight search does not work in a .shada file
 -- sn = max size an item can be, in KB
 vim.o.shada = "!,%10,'10,/0,:100,@100,h,s100"
 
@@ -129,46 +132,45 @@ vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
 vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
 vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
 
--- 12/26/25
--- For some reason for my terminal Alt+<key> sends Esc+<key>,
--- so we're manually rebinding the Alt rebinds we want to use
--- ! = insert and command line
-vim.keymap.set("!", "<Esc>h", "<A-h>", { remap = true })
-vim.keymap.set("!", "<Esc>j", "<A-j>", { remap = true })
-vim.keymap.set("!", "<Esc>k", "<A-k>", { remap = true })
-vim.keymap.set("!", "<Esc>l", "<A-l>", { remap = true })
-vim.keymap.set("!", "<Esc>u", "<A-u>", { remap = true })
-vim.keymap.set("!", "<Esc>o", "<A-o>", { remap = true })
+-- 12/28/25
+-- pneumonic: shout (so loud it affects all tabs)
+vim.keymap.set('n', 'so', ':tabo<CR>')
+vim.keymap.set('n', 'sG', ':0,.-1tabdo tabc<CR>')
+vim.keymap.set('n', 'sg', ':.+1,$tabdo tabc<CR>')
+vim.keymap.set('n', 'sb', ':tabc<CR>')
+vim.keymap.set('n', 'sm', ':tab sp<CR>')
+
+vim.keymap.set('n', 'gm', '<cmd>e $MYVIMRC<CR>', { desc = '[G]o to $[M]YVIMRC' })
+vim.keymap.set('n', 'gh', '<cmd>cd %:h<CR>', { desc = '[G]o [H]ere (to directory of current buffer)' })
+vim.keymap.set('n', 'g.', '<cmd>e .<CR>', { desc = '[G]o and explore .' })
+vim.keymap.set('n', 'g>', '<cmd>tabe .<CR>', { desc = '[G]o and explore . in new tab' })
+
+-- no matter the mode, ctrl q to go forward
+vim.keymap.set({ '', '!' }, '<C-q>', '<Esc>:tabn<CR>')
 
 -- See :h map-modes for what everything means
 -- Extending insert mode commands with Alt
-vim.keymap.set("!", "<A-h>", "<Esc>gea")
-vim.keymap.set("!", "<A-j>", "<Down>")
-vim.keymap.set("!", "<A-k>", "<Up>")
-vim.keymap.set("!", "<A-l>", "<Esc>ea")
-vim.keymap.set("!", "<A-u>", "<Esc>ua")
-vim.keymap.set("i", "<A-o>", "<Esc>A<CR><Esc>^Da")
-vim.keymap.set("i", "<A-O>", "<Esc>I<CR><Esc>ka")
+vim.keymap.set('!', '<A-h>', '<Left>')
+vim.keymap.set('!', '<A-j>', '<Down>')
+vim.keymap.set('!', '<A-k>', '<Up>')
+vim.keymap.set('!', '<A-l>', '<Right>')
+vim.keymap.set('!', '<C-A-h>', '<Esc>^C')
 
 -- Extending normal mode commands with Alt
-vim.keymap.set("n", "<A-o>", "A<CR><Esc>^D")
-vim.keymap.set("n", "<A-O>", "I<CR><Esc>k")
+vim.keymap.set('n', '<A-o>', 'o <C-w><Esc>')
+vim.keymap.set('n', '<A-O>', 'O <C-w><Esc>')
 
 -- In terminals, Ctrl+h = Ctrl+<BS>
-vim.keymap.set("n", "<C-A-h>", "^D")
-vim.keymap.set("!", "<C-A-h>", "<End> <C-u>")
-vim.keymap.set("n", "<C-h>", "a<C-w><Esc>")
-vim.keymap.set("!", "<C-h>", "<C-w>")
+vim.keymap.set('!', '<C-A-h>', '<Esc>^C')
+vim.keymap.set('!', '<C-h>', '<C-w>')
 
 -- End Basic Keymaps --
 -- Custom Commands --
 
 -- :cd %:h switches working directory to that of the current buffer
 -- :Here now does the same thing
-vim.api.nvim_create_user_command("Here", "cd %:h", {})
 
 -- End Custom Commands
-
 
 --  Autocommands --
 --  See `:help lua-guide-autocommands`
@@ -187,4 +189,4 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 -- End Autocommands --
 
 -- Set up lazy.nvim (plugins)
-require("config.lazy")
+require 'config.lazy'

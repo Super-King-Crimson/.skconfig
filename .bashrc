@@ -209,6 +209,7 @@ shopt -s direxpand
 alias ll='ls -alFh'
 alias la='ls -A'
 alias l='ls -CF'
+alias rm='rm -i'
 
 alias skconfig='git --git-dir=$HOME/.skconfig/ --work-tree=$HOME'
 alias ptouch="install /dev/null -m"
@@ -217,3 +218,8 @@ alias ahk-start="nohup ahk /home/skc/Binaries/startup/bin/ahk-setup.sh > /dev/nu
 
 # PATH modification
 export PATH="$HOME/.local/bin:$PATH"
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+. "$HOME/.cargo/env"
