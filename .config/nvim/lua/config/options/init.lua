@@ -1,29 +1,21 @@
 -- Options --
--- 12/30/25
 -- we'll figure it out
 -- vim.o.foldmethod = "expr"
 
--- 12/28/25
 vim.o.wrap = false
 
--- 12/27/25
 -- For kickstart
 vim.o.updatetime = 250
 
--- 12/26/25
--- Since Alt is esc we're gonna try to make this seamless
--- If the keys aren't pressed at the same time,
 -- they're not recorded as the same keypress
 -- or ig nevermind then
 vim.o.timeout = true
-vim.o.timeoutlen = 500
+vim.o.timeoutlen = 1000
 
--- 12/23/25
 -- case-insensitive search
 vim.o.smartcase = false
 vim.o.ignorecase = true
 
---12/16/25
 -- makes vim stop the search at the top/bottom of a file
 vim.o.wrapscan = false
 
@@ -36,7 +28,6 @@ vim.o.tabstop = 4
 vim.o.shiftwidth = 0
 vim.o.softtabstop = 4
 
--- 12/27
 -- joining the spaces gang
 vim.o.expandtab = true
 
