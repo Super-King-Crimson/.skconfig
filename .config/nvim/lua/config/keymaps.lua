@@ -1,4 +1,3 @@
--- 12/30/25
 -- Better jk (spans wrapped lines)
 vim.keymap.set("", "j", "gj")
 vim.keymap.set("", "k", "gk")
@@ -40,7 +39,6 @@ vim.keymap.set({ "", "!" }, "<C-e>", function()
   miniFileToggle()
 end, { desc = "[E]xplore current directory" })
 
--- 12/28/25
 vim.keymap.set("n", "gm", "<cmd>e $MYVIMRC<CR>", { desc = "[G]o to $[M]YVIMRC" })
 vim.keymap.set("n", "g.", "<cmd>tcd %:h<CR>", { desc = "Set buffer directory to current directory" })
 
