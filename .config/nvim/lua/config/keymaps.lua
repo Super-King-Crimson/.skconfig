@@ -1,17 +1,13 @@
 -- open in firefox
-vim.keymap.set(
-  "n",
-  "<leader>ob",
-  "<cmd>exe '!firefox " .. vim.fn.expand("%:p") .. "'<CR>",
-  { desc = "[O]pen in [B]rowser" }
-)
+vim.keymap.set("n", "<leader>ob", [[<cmd>exe '!firefox ' .. expand("%:p")<CR>]], { desc = "[O]pen in [B]rowser" })
 
 -- what the fuck
 -- obviously requires tmux in path
 vim.keymap.set(
   "n",
-  "<leader>wtf",
-  [[<cmd>exe "!tmux new-session -d -s NVIM_VSCODE_ATTACH 'codium ]] .. vim.fn.expand("%:p:h") .. [['" <CR>]]
+  "<leader>oc",
+  [[<cmd>exe "!tmux new-session -d -s NVIM_VSCODE_ATTACH 'codium " .. expand("%:p:h") .."'"<CR>]],
+  { desc = "Dude what" }
 )
 
 -- Better jk (spans wrapped lines)
