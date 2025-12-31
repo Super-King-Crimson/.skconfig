@@ -18,6 +18,9 @@ return {
       formatters_by_ft = {
         lua = { "stylua" },
         html = { "superhtml" },
+        javascript = { "prettier" },
+        typescript = { "prettier" },
+        css = { "prettier" },
       },
 
       format_on_save = function(bufnr)

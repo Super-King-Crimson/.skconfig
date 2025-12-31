@@ -24,9 +24,9 @@ vim.o.incsearch = true
 
 vim.o.number = true
 
-vim.o.tabstop = 4
+vim.o.tabstop = 2
 vim.o.shiftwidth = 0
-vim.o.softtabstop = 4
+vim.o.softtabstop = 2
 
 -- joining the spaces gang
 vim.o.expandtab = true

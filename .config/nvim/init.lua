@@ -10,3 +10,6 @@ require("lazynvim")
 require("config.autocommands")
 require("config.options")
 require("config.keymaps")
+
+-- Activate our colorscheme
+vim.cmd.colorscheme("moonfly")

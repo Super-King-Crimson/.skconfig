@@ -1,3 +1,19 @@
+-- open in firefox
+vim.keymap.set(
+  "n",
+  "<leader>ob",
+  "<cmd>exe '!firefox " .. vim.fn.expand("%:p") .. "'<CR>",
+  { desc = "[O]pen in [B]rowser" }
+)
+
+-- what the fuck
+-- obviously requires tmux in path
+vim.keymap.set(
+  "n",
+  "<leader>wtf",
+  [[<cmd>exe "!tmux new-session -d -s NVIM_VSCODE_ATTACH 'codium ]] .. vim.fn.expand("%:p:h") .. [['" <CR>]]
+)
+
 -- Better jk (spans wrapped lines)
 vim.keymap.set("", "j", "gj")
 vim.keymap.set("", "k", "gk")
@@ -12,6 +28,15 @@ vim.keymap.set("", "gl", "$", { desc = "[G]o to end of line" })
 
 -- Ctrl-S to save
 vim.keymap.set({ "n", "i" }, "<C-s>", "<cmd>w<CR>")
+
+-- MINI.NVIM MY GOAT
+vim.keymap.set(
+  "n",
+  "<Leader>os",
+  "<cmd>echo input('This will delete all unsaved files. Press Enter or Esc to confirm, C-c to cancel > ')|e! dummy|%bd!|edit #|bd #|lua MiniStarter.open()<CR>",
+  { desc = "[O]pen [S]tartup screen" }
+)
+
 -- MINI.NVIM MY GOAT
 local function miniFileToggle(from_current_buffer)
   if require("mini.files") == nil then
@@ -31,24 +56,66 @@ local function miniFileToggle(from_current_buffer)
   end
 end
 
-vim.keymap.set({ "", "!" }, "<C-l>", function()
+vim.keymap.set({ "", "i" }, "<C-l>", function()
   miniFileToggle(true)
 end, { desc = "Explore directory of [l]ocal buffer" })
 
-vim.keymap.set({ "", "!" }, "<C-e>", function()
+vim.keymap.set({ "", "i" }, "<C-e>", function()
+  vim.cmd.normal("<Esc>")
   miniFileToggle()
 end, { desc = "[E]xplore current directory" })
 
-vim.keymap.set("n", "gm", "<cmd>e $MYVIMRC<CR>", { desc = "[G]o to $[M]YVIMRC" })
-vim.keymap.set("n", "g.", "<cmd>tcd %:h<CR>", { desc = "Set buffer directory to current directory" })
+-- Trust this is useful
+vim.keymap.set("n", "<Leader>.", "<cmd>tcd %:h<CR>", { desc = "[.] Set buffer directory to tab directory" })
 
--- tab manipulation commands (shout!)
+-- Jump to Neovim files
+vim.keymap.set("n", "<Leader>nn", [[<cmd>exe 'e ' ..stdpath('config')<CR>]], { desc = "From directory of init.lua" })
+vim.keymap.set(
+  "n",
+  "<Leader>na",
+  [[<cmd>exe 'e ' ..stdpath('config') .. '/lua/config/autocommands' <CR>]],
+  { desc = "[N]eovim [A]utocommands" }
+)
+vim.keymap.set(
+  "n",
+  "<Leader>no",
+  [[<cmd>exe 'e ' ..stdpath('config') .. '/lua/config/options/init.lua' <CR>]],
+  { desc = "[N]eovim [O]ptions" }
+)
+vim.keymap.set(
+  "n",
+  "<Leader>nk",
+  [[<cmd>exe 'e ' ..stdpath('config') .. '/lua/config/keymaps.lua' <CR>]],
+  { desc = "[N]eovim [K]eymaps" }
+)
+vim.keymap.set(
+  "n",
+  "<Leader>nl",
+  [[<cmd>exe 'e ' ..stdpath('config') .. '/lua/lazynvim' <CR>]],
+  { desc = "[N]eovim [L]azy Plugins" }
+)
+vim.keymap.set(
+  "n",
+  "<Leader>np",
+  [[<cmd>exe 'e ' ..stdpath('config') .. '/lua/lazynvim' <CR>]],
+  { desc = "[N]eovim Lazy [P]lugins" }
+)
+
+-- tab manipulation commands (s for shout, because t isn't home row)
 vim.keymap.set("n", "so", ":tabo<CR>")
+
 -- clear left/right
-vim.keymap.set("n", "sch", "<cmd>0,.-1tabdo tabc<CR>")
-vim.keymap.set("n", "scl", "<cmd>.+1,$tabdo tabc<CR>")
+vim.keymap.set("n", "sch", "<cmd>0,.-1tabdo tabc<CR>", { desc = "Close all tabs to left" })
+vim.keymap.set("n", "scl", "<cmd>.+1,$tabdo tabc<CR>", { desc = "Close all tabs to right" })
+vim.keymap.set("n", "scc", "<cmd>tabc<CR>", { desc = "Close tab" })
 vim.keymap.set("n", "sx", "<cmd>tabc<CR>")
+
 vim.keymap.set("n", "sn", "<cmd>tabe <CR>")
+
+vim.keymap.set("n", "ss", function()
+  vim.cmd("tab sp")
+  miniFileToggle(true)
+end)
 
 --shout for a terminal
 vim.keymap.set("n", "st", function()
@@ -62,11 +129,13 @@ end)
 -- Esc + Esc to exit terminal (VERY IMPORTANT!)
 vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
 
--- 4 tabs + last tab (and going to middle tab)
+-- 6 tabs + last tab (and going to middle tab)
 vim.keymap.set({ "", "!" }, "<A-1>", "<cmd>:1tabnext<CR>")
 vim.keymap.set({ "", "!" }, "<A-2>", "<cmd>:2tabnext<CR>")
 vim.keymap.set({ "", "!" }, "<A-3>", "<cmd>:3tabnext<CR>")
 vim.keymap.set({ "", "!" }, "<A-4>", "<cmd>:4tabnext<CR>")
+vim.keymap.set({ "", "!" }, "<A-5>", "<cmd>:5tabnext<CR>")
+vim.keymap.set({ "", "!" }, "<A-6>", "<cmd>:6tabnext<CR>")
 vim.keymap.set({ "", "!" }, "<A-0>", "<cmd>:tablast<CR>")
 
 -- Swap between two tabs (normal mode only)

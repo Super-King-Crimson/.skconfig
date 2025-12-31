@@ -39,8 +39,6 @@ return {
       vim.list_extend(ensure_installed, debuggers)
       vim.list_extend(ensure_installed, linters)
 
-      vim.print(ensure_installed)
-
       require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
 
       local masonlspconfig = require("mason-lspconfig")

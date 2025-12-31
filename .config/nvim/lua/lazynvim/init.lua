@@ -21,10 +21,10 @@ require("lazy").setup({
     -- import your plugins
     { import = "lazynvim/plugins" },
   },
-  checker = { enabled = false },
+  change_detection = { enabled = false, notify = false },
   -- Configure any other settings here. See the documentation for more details.
   -- colorscheme that will be used when installing plugins.
-  install = { colorscheme = { "tokyonight", "habamax" } },
+  install = { colorscheme = { "moonfly", "tokyonight", "habamax" } },
   performance = {
     rtp = {
       disabled_plugins = {
