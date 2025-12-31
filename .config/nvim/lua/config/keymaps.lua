@@ -55,9 +55,12 @@ vim.keymap.set("n", "st", function()
   vim.cmd([[
     $tabnew
     terminal
-    <normal> a
+    normal i
   ]])
 end)
+
+-- Esc + Esc to exit terminal (VERY IMPORTANT!)
+vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
 
 -- 4 tabs + last tab (and going to middle tab)
 vim.keymap.set({ "", "!" }, "<A-1>", "<cmd>:1tabnext<CR>")
@@ -89,8 +92,6 @@ vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
 
 -- Diagnostic keymaps
 vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostic [Q]uickfix list" })
-
-vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
 
 -- hjkl to move big boy
 vim.keymap.set("n", "<left>", '<cmd>echo "Use h to move!!"<CR>')
