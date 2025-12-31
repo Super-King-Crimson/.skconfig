@@ -19,8 +19,9 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup({
   spec = {
     -- import your plugins
-    { import = "plugins" },
+    { import = "lazynvim/plugins" },
   },
+  checker = { enabled = false },
   -- Configure any other settings here. See the documentation for more details.
   -- colorscheme that will be used when installing plugins.
   install = { colorscheme = { "tokyonight", "habamax" } },
@@ -28,27 +29,27 @@ require("lazy").setup({
     rtp = {
       disabled_plugins = {
         "gzip",
-	"tarPlugin",
-	"tohtml",
-	"zipPlugin",
-      }
+        "tarPlugin",
+        "tohtml",
+        "zipPlugin",
+      },
     },
   },
   ui = {
     icons = vim.g.have_nerd_font and {} or {
-      cmd = '⌘',
-      config = '🛠',
-      event = '📅',
-      ft = '📂',
-      init = '⚙',
-      keys = '🗝',
-      plugin = '🔌',
-      runtime = '💻',
-      require = '🌙',
-      source = '📄',
-      start = '🚀',
-      task = '📌',
-      lazy = '💤 ',
+      cmd = "⌘",
+      config = "🛠",
+      event = "📅",
+      ft = "📂",
+      init = "⚙",
+      keys = "🗝",
+      plugin = "🔌",
+      runtime = "💻",
+      require = "🌙",
+      source = "📄",
+      start = "🚀",
+      task = "📌",
+      lazy = "💤 ",
     },
   },
 })

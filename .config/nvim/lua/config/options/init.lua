@@ -1,8 +1,7 @@
 -- Options --
 -- 12/30/25
--- For nvim-tree
-vim.g.loaded_netrw = 1
-vim.g.loaded_netrwPlugin = 1
+-- we'll figure it out
+-- vim.o.foldmethod = "expr"
 
 -- 12/28/25
 vim.o.wrap = false
@@ -102,5 +101,4 @@ vim.o.confirm = true
 -- sn = max size an item can be, in KB
 vim.o.shada = "!,%10,'10,/0,:100,@100,h,s100"
 
-require("config.options.lsp")
 require("config.options.diagnostics")

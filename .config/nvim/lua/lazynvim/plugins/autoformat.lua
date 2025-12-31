@@ -17,11 +17,7 @@ return {
       notify_on_error = false,
       formatters_by_ft = {
         lua = { "stylua" },
-        javascript = { "prettier" },
-        typescript = { "prettier" },
-        html = { "prettier" },
-        css = { "prettier" },
-        markdown = { "prettier" },
+        html = { "superhtml" },
       },
 
       format_on_save = function(bufnr)

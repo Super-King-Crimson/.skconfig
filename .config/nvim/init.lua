@@ -6,7 +6,7 @@ vim.g.have_nerd_font = true
 
 -- Set up everything
 -- gets lazy so static plugin setup also goes here
-require("config.lazy")
+require("lazynvim")
 require("config.autocommands")
 require("config.options")
 require("config.keymaps")
