@@ -1,3 +1,12 @@
+-- open in terminal
+vim.keymap.set("n", "<Leader>ot", function()
+  vim.cmd([[
+    $tabnew
+    terminal
+    normal i
+  ]])
+end, { desc = "[O]pen [T]erminal" })
+
 -- open in firefox
 vim.keymap.set("n", "<leader>ob", [[<cmd>exe '!firefox ' .. expand("%:p")<CR>]], { desc = "[O]pen in [B]rowser" })
 
@@ -100,26 +109,20 @@ vim.keymap.set(
 -- tab manipulation commands (s for shout, because t isn't home row)
 vim.keymap.set("n", "so", ":tabo<CR>")
 
+-- CTRL-TAB COME BACK
+vim.keymap.set("n", "sj", "gT")
+vim.keymap.set("n", "sk", "gt")
 -- clear left/right
 vim.keymap.set("n", "sch", "<cmd>0,.-1tabdo tabc<CR>", { desc = "Close all tabs to left" })
 vim.keymap.set("n", "scl", "<cmd>.+1,$tabdo tabc<CR>", { desc = "Close all tabs to right" })
 vim.keymap.set("n", "scc", "<cmd>tabc<CR>", { desc = "Close tab" })
-vim.keymap.set("n", "sx", "<cmd>tabc<CR>")
+vim.keymap.set("n", "sx", "<cmd>bdelete<CR>")
 
-vim.keymap.set("n", "sn", "<cmd>tabe <CR>")
+vim.keymap.set("n", "sn", "<cmd>tabe<CR>")
 
 vim.keymap.set("n", "ss", function()
   vim.cmd("tab sp")
   miniFileToggle(true)
-end)
-
---shout for a terminal
-vim.keymap.set("n", "st", function()
-  vim.cmd([[
-    $tabnew
-    terminal
-    normal i
-  ]])
 end)
 
 -- Esc + Esc to exit terminal (VERY IMPORTANT!)
