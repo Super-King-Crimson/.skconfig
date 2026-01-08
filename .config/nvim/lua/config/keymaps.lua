@@ -41,11 +41,20 @@ vim.keymap.set("", "gl", "$", { desc = "[G]o to end of line" })
 -- Ctrl-S to save
 vim.keymap.set({ "n", "i" }, "<C-s>", "<cmd>w<CR>")
 
--- Ctrl-X: quitting suite
+-- Ctrl-X: deleting/quitting suite
+vim.keymap.set("n", "<C-w>q", "<Nul>", { desc = "No more quick quitting!" })
+
 vim.keymap.set({ "", "!", "t" }, "<C-x>d", "<cmd>bdelete<CR>", { desc = "[D]elete the current buffer" })
 vim.keymap.set({ "", "!", "t" }, "<C-x>fd", "<cmd>bdelete!<CR>", { desc = "[F]orce [D]elete the current buffer" })
+
 vim.keymap.set({ "", "!", "t" }, "<C-x>a", "<cmd>wa|qa!<CR>", { desc = "Write and quit [A]ll" })
 vim.keymap.set({ "", "!", "t" }, "<C-x>fa", "<cmd>qa!<CR>", { desc = "[F]orce quit [A]ll" })
+
+vim.keymap.set({ "", "!", "t" }, "<C-x>w", "<cmd>w|q!<CR>", { desc = "[W]rite and quit" })
+vim.keymap.set({ "", "!", "t" }, "<C-x>x", "<cmd>q<CR>", { desc = "Quit" })
+vim.keymap.set({ "", "!", "t" }, "<C-x>fx", "q!", { desc = "[F]orce Quit" })
+
+vim.keymap.set("n", "<C-x>n", "/\\vx^<CR>", { desc = "Clear [N] (for search)" })
 
 -- MINI.NVIM MY GOAT
 vim.keymap.set(
