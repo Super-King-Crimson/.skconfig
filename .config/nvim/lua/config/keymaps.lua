@@ -1,3 +1,4 @@
+-- Open suite
 -- open in terminal
 vim.keymap.set("n", "<Leader>ot", function()
   vim.cmd([[
@@ -18,6 +19,12 @@ vim.keymap.set(
   [[<cmd>exe "!tmux new-session -d -s NVIM_VSCODE_ATTACH 'codium " .. expand("%:p:h") .."'"<CR>]],
   { desc = "Dude what" }
 )
+
+-- [J]ump around text faster
+vim.keymap.set("", "<leader>jj", "}", { desc = "[J]ump up to next line" })
+vim.keymap.set("", "<leader>jk", "{", { desc = "[J]ump down to next line" })
+vim.keymap.set("", "<leader>jh", "20k", { desc = "[J]ump [H]igh" })
+vim.keymap.set("", "<leader>jl", "20j", { desc = "[J]ump [L]ow" })
 
 -- Better jk (spans wrapped lines)
 vim.keymap.set("", "j", "gj")
@@ -68,6 +75,7 @@ local function miniFileToggle(from_current_buffer)
 end
 
 vim.keymap.set({ "", "i" }, "<C-l>", function()
+  vim.cmd.normal("<Esc>")
   miniFileToggle(true)
 end, { desc = "Explore directory of [l]ocal buffer" })
 
