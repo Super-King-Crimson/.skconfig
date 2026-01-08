@@ -35,10 +35,10 @@ vim.keymap.set("", "gl", "$", { desc = "[G]o to end of line" })
 vim.keymap.set({ "n", "i" }, "<C-s>", "<cmd>w<CR>")
 
 -- Ctrl-X: quitting suite
-vim.keymap.set({ "", "!" }, "<C-x>d", "<cmd>bdelete<CR>", { desc = "[D]elete the current buffer" })
-vim.keymap.set({ "", "!" }, "<C-x>fd", "<cmd>bdelete!<CR>", { desc = "[F]orce [D]elete the current buffer" })
-vim.keymap.set({ "", "!" }, "<C-x>a", "<cmd>wa|qa!<CR>", { desc = "Write and quit [A]ll" })
-vim.keymap.set({ "", "!" }, "<C-x>fa", "<cmd>qa!<CR>", { desc = "[F]orce quit [A]ll" })
+vim.keymap.set({ "", "!", "t" }, "<C-x>d", "<cmd>bdelete<CR>", { desc = "[D]elete the current buffer" })
+vim.keymap.set({ "", "!", "t" }, "<C-x>fd", "<cmd>bdelete!<CR>", { desc = "[F]orce [D]elete the current buffer" })
+vim.keymap.set({ "", "!", "t" }, "<C-x>a", "<cmd>wa|qa!<CR>", { desc = "Write and quit [A]ll" })
+vim.keymap.set({ "", "!", "t" }, "<C-x>fa", "<cmd>qa!<CR>", { desc = "[F]orce quit [A]ll" })
 
 -- MINI.NVIM MY GOAT
 vim.keymap.set(
