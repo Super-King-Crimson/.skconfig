@@ -34,6 +34,12 @@ vim.keymap.set("", "gl", "$", { desc = "[G]o to end of line" })
 -- Ctrl-S to save
 vim.keymap.set({ "n", "i" }, "<C-s>", "<cmd>w<CR>")
 
+-- Ctrl-X: quitting suite
+vim.keymap.set({ "", "!" }, "<C-x>d", "<cmd>bdelete<CR>", { desc = "[D]elete the current buffer" })
+vim.keymap.set({ "", "!" }, "<C-x>fd", "<cmd>bdelete!<CR>", { desc = "[F]orce [D]elete the current buffer" })
+vim.keymap.set({ "", "!" }, "<C-x>a", "<cmd>wa|qa!<CR>", { desc = "Write and quit [A]ll" })
+vim.keymap.set({ "", "!" }, "<C-x>fa", "<cmd>qa!<CR>", { desc = "[F]orce quit [A]ll" })
+
 -- MINI.NVIM MY GOAT
 vim.keymap.set(
   "n",
@@ -112,12 +118,12 @@ vim.keymap.set("n", "so", ":tabo<CR>")
 -- CTRL-TAB COME BACK
 vim.keymap.set("n", "sj", "gT")
 vim.keymap.set("n", "sk", "gt")
+
 -- clear left/right
 vim.keymap.set("n", "sch", "<cmd>0,.-1tabdo tabc<CR>", { desc = "Close all tabs to left" })
 vim.keymap.set("n", "scl", "<cmd>.+1,$tabdo tabc<CR>", { desc = "Close all tabs to right" })
 vim.keymap.set("n", "scc", "<cmd>tabc<CR>", { desc = "Close tab" })
-vim.keymap.set("n", "sx", "<cmd>bdelete<CR>")
-
+vim.keymap.set("n", "sx", "<cmd>tabc<CR>", { desc = "Close tab" })
 vim.keymap.set("n", "sn", "<cmd>tabe<CR>")
 
 vim.keymap.set("n", "ss", function()
