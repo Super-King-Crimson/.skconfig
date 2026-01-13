@@ -26,6 +26,8 @@ return {
           root_markers = { ".editorconfig", ".stylua.toml", ".git" },
         },
         superhtml = {},
+        cssls = {},
+        ts_ls = {},
       }
 
       local debuggers = {}
@@ -33,6 +35,7 @@ return {
       -- and formatters
       local linters = {
         "stylua",
+        "prettier",
       }
 
       local ensure_installed = vim.tbl_keys(servers)

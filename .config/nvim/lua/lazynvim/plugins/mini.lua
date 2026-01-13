@@ -36,6 +36,41 @@ return {
         },
       })
 
+      local function miniFileToggle(from_current_buffer)
+        if require("mini.files") == nil then
+          return
+        end
+
+        local variant = from_current_buffer
+            and function()
+              MiniFiles.open(vim.api.nvim_buf_get_name(0))
+            end
+          or function()
+            MiniFiles.open(nil, false)
+          end
+
+        if MiniFiles.get_explorer_state() then
+          MiniFiles.close()
+        else
+          variant()
+        end
+      end
+
+      vim.keymap.set({ "", "i" }, "<C-l>", function()
+        vim.cmd.normal("<Esc>")
+        miniFileToggle(true)
+      end, { desc = "Explore directory of [l]ocal buffer" })
+
+      vim.keymap.set({ "", "i" }, "<C-e>", function()
+        vim.cmd.normal("<Esc>")
+        miniFileToggle()
+      end, { desc = "[E]xplore current directory" })
+
+      vim.keymap.set("n", "ss", function()
+        vim.cmd("tab sp")
+        miniFileToggle(true)
+      end)
+
       require("mini.pairs").setup({
         modes = { command = true },
         mappings = {

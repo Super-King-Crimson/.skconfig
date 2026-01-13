@@ -1,5 +1,5 @@
-local hover_highlight = require("config.autocommands.lsp.hover_highlight")
-local setup_lsp_keymaps = require("config.autocommands.lsp.setup_lsp_keymaps")
+local hover_highlight = require("skc.autocommands.lsp.hover_highlight")
+local setup_lsp_keymaps = require("skc.autocommands.lsp.setup_lsp_keymaps")
 
 vim.api.nvim_create_autocmd("LspAttach", {
   group = vim.api.nvim_create_augroup("kickstart-lsp-attach", { clear = true }),
