@@ -1,12 +1,13 @@
 -- Options --
 -- we'll figure it out
 -- vim.o.foldmethod = "expr"
+-- lmao the answer was a plugin
 
 vim.o.wrap = false
 vim.o.updatetime = 250
 
 vim.o.timeout = true
-vim.o.timeoutlen = 1000
+vim.o.timeoutlen = 5000
 
 -- case-insensitive search
 vim.o.smartcase = false

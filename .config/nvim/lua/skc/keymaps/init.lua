@@ -8,7 +8,7 @@ vim.keymap.set("n", "<right>", '<cmd>echo "use l to move!!"<cr>')
 vim.keymap.set("n", "<Leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostic [Q]uickfix list" })
 
 -- Trust this is useful
-vim.keymap.set("n", "<Leader>.", "<cmd>tcd %:h<CR>", { desc = "[.] Set buffer directory to tab directory" })
+vim.keymap.set("n", "<Leader>.", "<cmd>cd %:h<CR>", { desc = "Set workspace directory to that of current buffer" })
 
 require("skc/keymaps/insert_ext")
 require("skc/keymaps/macro")

@@ -14,6 +14,6 @@ vim.keymap.set("n", "<leader>ob", [[<cmd>exe '!firefox ' .. expand("%:p")<CR>]],
 vim.keymap.set(
   "n",
   "<leader>oc",
-  [[<cmd>exe "!tmux new-session -d -s NVIM_VSCODE_ATTACH 'codium " .. expand("%:p:h") .."'"<CR>]],
+  [[<cmd>exe "!tmux new-session -d -s NVIM_VSCODE_ATTACH 'code " .. expand("%:p:h") .."'"<CR>]],
   { desc = "Dude what" }
 )

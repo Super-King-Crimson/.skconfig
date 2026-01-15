@@ -1,0 +1,12 @@
+let curr_session = ""
+let default_name = "Latest.vim"
+
+on("sessionEnterPre", (sessionName) => {
+  if !sessionName { sessionName = default_name }
+
+  curr_session = sessionName
+})
+
+on("file_write", () => {
+  mksession(curr_session)
+})

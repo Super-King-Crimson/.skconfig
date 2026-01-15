@@ -3,21 +3,21 @@ vim.keymap.set("n", "<Leader>nn", [[<cmd>exe 'e ' ..stdpath('config')<CR>]], { d
 vim.keymap.set(
   "n",
   "<Leader>na",
-  [[<cmd>exe 'e ' ..stdpath('config') .. '/lua/config/autocommands' <CR>]],
+  [[<cmd>exe 'e ' ..stdpath('config') .. '/lua/skc/autocommands' <CR>]],
   { desc = "[N]eovim [A]utocommands" }
 )
 
 vim.keymap.set(
   "n",
   "<Leader>no",
-  [[<cmd>exe 'e ' ..stdpath('config') .. '/lua/config/options/init.lua' <CR>]],
+  [[<cmd>exe 'e ' ..stdpath('config') .. '/lua/skc/options/init.lua' <CR>]],
   { desc = "[N]eovim [O]ptions" }
 )
 
 vim.keymap.set(
   "n",
   "<Leader>nk",
-  [[<cmd>exe 'e ' ..stdpath('config') .. '/lua/config/keymaps.lua' <CR>]],
+  [[<cmd>exe 'e ' ..stdpath('config') .. '/lua/skc/keymaps' <CR>]],
   { desc = "[N]eovim [K]eymaps" }
 )
 

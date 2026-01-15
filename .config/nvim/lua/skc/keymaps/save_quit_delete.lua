@@ -8,14 +8,13 @@ vim.keymap.set({ "", "!", "t" }, "<C-x>d", "<cmd>bdelete<CR>", { desc = "[D]elet
 vim.keymap.set({ "", "!", "t" }, "<C-x>fd", "<cmd>bdelete!<CR>", { desc = "[F]orce [D]elete the current buffer" })
 
 vim.keymap.set({ "", "!", "t" }, "<C-x>a", "<cmd>qa<CR>", { desc = "Quit [A]ll" })
-vim.keymap.set({ "", "!", "t" }, "<C-x>fa", "<cmd>qa!<CR>", { desc = "[F]orce quit [A]ll" })
 
-vim.keymap.set(
-  { "", "!", "t" },
-  "<C-x>ff",
-  "<cmd>wa<CR><cmd>qa!<CR>",
-  { desc = "[F]orce [F]arewell (save and quit all)" }
-)
+vim.keymap.set({ "", "!", "t" }, "<C-x>ff", function()
+  pcall(function()
+    vim.cmd("wa")
+  end)
+  vim.cmd("qa!")
+end, { desc = "[F]orce [F]arewell (save and quit all)" })
 
 vim.keymap.set({ "", "!", "t" }, "<C-x>w", "<cmd>w|q!<CR>", { desc = "[W]rite and quit" })
 vim.keymap.set({ "", "!", "t" }, "<C-x>s", "<cmd>w|q!<CR>", { desc = "[S]ave and quit" })

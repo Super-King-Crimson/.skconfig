@@ -8,6 +8,10 @@ vim.keymap.set("", "<leader>j", "}", { desc = "[j]ump down to next line" })
 vim.keymap.set("", "j", "gj")
 vim.keymap.set("", "k", "gk")
 
+-- Not in operator pending mode (i like my dj) (spans wrapped lines)
+vim.keymap.del("o", "j")
+vim.keymap.del("o", "k")
+
 -- in case for some reason you WANT to skip a long ass line
 vim.keymap.set("", "gj", "j")
 vim.keymap.set("", "gk", "k")

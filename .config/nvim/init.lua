@@ -8,7 +8,7 @@ vim.g.have_nerd_font = true
 -- gets lazy so static plugin setup also goes here
 require("skc.keymaps")
 require("skc.options")
-require("skc.autocommands")
+require("skc.commands")
 require("lazynvim")
 
 vim.cmd.colorscheme("moonfly")

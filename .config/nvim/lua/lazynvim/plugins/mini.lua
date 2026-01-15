@@ -7,10 +7,7 @@ return {
       require("mini.surround").setup()
       require("mini.comment").setup()
       require("mini.indentscope").setup()
-
-      require("mini.sessions").setup()
       require("mini.move").setup()
-      require("mini.starter").setup()
 
       local hipatterns = require("mini.hipatterns")
       local hi_words = require("mini.extra").gen_highlighter.words
@@ -57,12 +54,10 @@ return {
       end
 
       vim.keymap.set({ "", "i" }, "<C-l>", function()
-        vim.cmd.normal("<Esc>")
         miniFileToggle(true)
       end, { desc = "Explore directory of [l]ocal buffer" })
 
       vim.keymap.set({ "", "i" }, "<C-e>", function()
-        vim.cmd.normal("<Esc>")
         miniFileToggle()
       end, { desc = "[E]xplore current directory" })
 
