@@ -1,7 +1,8 @@
 -- Options --
--- we'll figure it out
--- vim.o.foldmethod = "expr"
--- lmao the answer was a plugin
+vim.o.foldcolumn = "1"
+vim.o.foldlevel = 99
+vim.o.foldlevelstart = 99
+vim.o.foldenable = true
 
 vim.o.wrap = false
 vim.o.updatetime = 250

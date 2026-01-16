@@ -2,9 +2,9 @@ vim.keymap.set("n", "<Leader>nn", [[<cmd>exe 'e ' ..stdpath('config')<CR>]], { d
 
 vim.keymap.set(
   "n",
-  "<Leader>na",
-  [[<cmd>exe 'e ' ..stdpath('config') .. '/lua/skc/autocommands' <CR>]],
-  { desc = "[N]eovim [A]utocommands" }
+  "<Leader>nc",
+  [[<cmd>exe 'e ' ..stdpath('config') .. '/lua/skc/commands' <CR>]],
+  { desc = "[N]eovim [C]utocommands" }
 )
 
 vim.keymap.set(

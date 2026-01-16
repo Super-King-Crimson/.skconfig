@@ -1,4 +1,3 @@
--- Set this to make lazy do what its supposed to do
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
