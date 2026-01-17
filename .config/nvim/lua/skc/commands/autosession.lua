@@ -1,7 +1,8 @@
 local SESSION_DIR = "/home/skc/Documents/nvimsessions/"
 local defaultSessionName = "latest"
 local currSession = nil
-local silent = true
+local silent = false
+local debugMode = false
 
 -- for a function a bit down don't worry abt it
 local pickers
@@ -9,6 +10,20 @@ local finders
 local conf
 local actions
 local action_state
+
+local function logMsg(msg, logLevel)
+  if silent then
+    return
+  end
+
+  vim.notify(msg, logLevel or vim.log.levels.INFO)
+end
+
+local function logDebug(debugMsg, logLevel)
+  if debugMode then
+    logMsg("DEBUG: " .. debugMsg, logLevel)
+  end
+end
 
 local function sessionNameToFullPath(name)
   local path = SESSION_DIR .. name
@@ -31,14 +46,6 @@ local function tableContains(tab, val)
   return false
 end
 
-local function logMsg(msg, logLevel)
-  if silent then
-    return
-  end
-
-  vim.notify(msg, logLevel)
-end
-
 local function writeAutosession(name)
   if name == nil or name == "" or name == vim.NIL then
     error("provide a session name")
@@ -51,14 +58,15 @@ local function writeAutosession(name)
   local dirExists = vim.fn.isdirectory(parentDir) == 1
 
   if not dirExists then
-    logMsg(parentDir .. " doesn't exist, initializing")
-    vim.cmd("!mkdir -p " .. parentDir)
+    logDebug(parentDir .. " doesn't exist, initializing")
+    vim.cmd("silent !mkdir -p " .. parentDir)
   end
 
-  vim.cmd("mksession! " .. sessionPath)
+  -- sorry we can't ever save the terminals might as well keep a clean slate between wkspaces
+  vim.cmd("silent mksession! " .. sessionPath)
 
   if not silent then
-    logMsg("Wrote session" .. sessionPath, vim.log.levels.INFO)
+    logDebug("Wrote session" .. sessionPath, vim.log.levels.INFO)
   end
 
   return sessionPath
@@ -96,6 +104,7 @@ local function loadAutosession(sessionName)
 
   currSession = sessionName
 
+  vim.cmd("silent! %bwipeout!")
   vim.cmd("silent! source " .. sessionNameToFullPath(sessionName))
   logMsg("Successfully sourced " .. sessionName, vim.log.levels.INFO)
 end
@@ -123,7 +132,7 @@ local function fuzzyFindPrompt(items, callback)
     return
   end
 
-  logMsg("options: ", table.concat(items, " "))
+  logDebug("options: ", table.concat(items, " "))
 
   local opts = {
     prompt_title = "Session Selection",
@@ -157,13 +166,14 @@ end
 vim.keymap.set("n", "<Leader>os", loadAutosessionFromFuzzyFind, { desc = "[O]pen [S]ession" })
 
 local function writeAutosessionFn(args)
-  local name = args.fargs[1] or nil
+  local name = args and args.fargs[1] or nil
+  local bang = args and args.bang or nil
 
   if name == nil or name == "" or name == vim.NIL then
     name = currSession or defaultSessionName
   end
 
-  if args.bang then
+  if bang then
     writeAutosession(name)
   else
     changeWriteAutoSession(name)
@@ -178,12 +188,13 @@ vim.api.nvim_create_user_command("WriteAutosession", writeAutosessionFn, {
 })
 
 local function loadAutosessionFn(args)
-  local name = args.fargs[1] or nil
+  local name = args and args.fargs[1] or nil
+
   if name == "" or name == nil or name == vim.NIL then
     name = defaultSessionName
   end
 
-  loadAutosession(args.fargs[1])
+  loadAutosession(name)
 end
 vim.api.nvim_create_user_command("LoadAutosession", loadAutosessionFn, {
   desc = "Load a session that will be written to upon filewrite",
@@ -204,8 +215,7 @@ vim.keymap.set("n", "<Leader>was", whichAutosessionFn, { desc = "[W]hich [A]uto 
 
 local function changeWriteAutoSessionFromInput()
   vim.ui.input({ prompt = "Session name: " }, function(input)
-    local path = changeWriteAutoSession(input)
-    logMsg("Session saved at " .. path, vim.log.levels.INFO)
+    changeWriteAutoSession(input)
   end)
 end
 vim.keymap.set("n", "<Leader>ws", changeWriteAutoSessionFromInput, { desc = "[W]rite [S]ession" })

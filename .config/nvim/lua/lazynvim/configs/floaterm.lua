@@ -21,6 +21,5 @@ return {
     })
 
     vim.keymap.set("n", "<Leader>ot", "<cmd>FloatermToggle<CR>", { desc = "[O]pen [T]erminal" })
-    vim.keymap.set("t", "<C-f>f", "<cmd>FloatermToggle<CR>")
   end,
 }
