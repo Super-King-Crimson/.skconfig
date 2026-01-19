@@ -185,8 +185,14 @@ decrypt_extract_symmetrical_gpg() {
 }
 alias dec-sym='decrypt_extract_symmetrical_gpg'
 
+cd() {
+  builtin cd $@
+  ls
+}
+
 # Set defaults
 export EDITOR="nvim"
+export TERMINAL="konsole"
 export VISUAL="$EDITOR"
 
 # Shortcuts
@@ -209,7 +215,7 @@ shopt -s direxpand
 alias ll='ls -alFh'
 alias la='ls -A'
 alias l='ls -CF'
-alias rm='rm -i'
+alias d='cd'
 
 alias skconfig='git --git-dir=$HOME/.skconfig/ --work-tree=$HOME'
 alias ptouch="install /dev/null -m"
