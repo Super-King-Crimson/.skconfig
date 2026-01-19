@@ -14,3 +14,6 @@ vim.keymap.set("i", "<A-p>", "<Esc>gea")
 -- Backspacing and undos
 vim.keymap.set({ "!", "t" }, "<C-h>", "<C-w>")
 vim.keymap.set("i", "<C-h>", "<C-g>u<C-w>")
+
+vim.keymap.set({ "!", "t" }, "<C-BS>", "<C-w>")
+vim.keymap.set("i", "<C-BS>", "<C-g>u<C-w>")

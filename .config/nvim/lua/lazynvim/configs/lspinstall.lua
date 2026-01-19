@@ -1,9 +1,5 @@
 return {
   {
-    "seblyng/roslyn.nvim",
-    opts = {},
-  },
-  {
     "WhoIsSethDaniel/mason-tool-installer.nvim",
     dependencies = {
       "saghen/blink.cmp",
@@ -27,8 +23,11 @@ return {
         "css-lsp",
         "superhtml",
         "typescript-language-server",
-        "roslyn",
         "markdown-oxide",
+      }
+
+      local external_lsp_tools = {
+        "godot",
       }
 
       local tools = {
@@ -41,7 +40,29 @@ return {
 
       require("mason-tool-installer").setup({ ensure_installed = tools })
 
+      vim.list_extend(lsp_tools, external_lsp_tools)
       vim.lsp.enable(lsp_tools)
+    end,
+  },
+  {
+    "seblyng/roslyn.nvim",
+    dependencies = {
+      { "khoido2003/roslyn-filewatch.nvim", opts = {} },
+    },
+    config = function()
+      require("roslyn_filewatch").setup({
+        preset = "unity",
+      })
+
+      require("roslyn").setup({
+        lock_target = true,
+        filewatching = "off",
+        choose_target = function(targets)
+          if #targets == 1 then
+            return targets[1]
+          end
+        end,
+      })
     end,
   },
 }

@@ -205,20 +205,26 @@ vim.api.nvim_create_user_command("LoadAutosession", loadAutosessionFn, {
 vim.keymap.set("n", "<Leader>O", loadAutosessionFn, { desc = "[O]pen previous session" })
 
 local function whichAutosessionFn()
-  vim.notify("Session: " .. currSession, vim.log.levels.INFO)
+  print("Session: " .. (currSession or "none"))
 end
 vim.api.nvim_create_user_command("WhichAutosession", whichAutosessionFn, {
   force = true,
   desc = "Output the name of your current session",
 })
-vim.keymap.set("n", "<Leader>was", whichAutosessionFn, { desc = "[W]hich [A]uto [S]ession" })
+vim.keymap.set("n", "<Leader>?s", whichAutosessionFn, { desc = "Which [S]ession?" })
 
 local function changeWriteAutoSessionFromInput()
   vim.ui.input({ prompt = "Session name: " }, function(input)
     changeWriteAutoSession(input)
   end)
 end
+
 vim.keymap.set("n", "<Leader>ws", changeWriteAutoSessionFromInput, { desc = "[W]rite [S]ession" })
+
+vim.api.nvim_create_user_command("EditAutosessions", "e " .. sessionNameToFullPath(defaultSessionName), {
+  desc = "Output the name of your current session",
+})
+vim.keymap.set("n", "<Leader>na", "<cmd>EditAutosessions<CR>", { desc = "[N]eovim [A]utosessions" })
 
 -- in case i wanna add another write condition
 local augroup = vim.api.nvim_create_augroup("skc-auto-write-session", { clear = true })

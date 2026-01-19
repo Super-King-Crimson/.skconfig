@@ -64,3 +64,4 @@ vim.o.confirm = true
 vim.o.shada = "'10,/0,:100,@100,h,s100"
 
 require("skc.options.diagnostics")
+require("skc.options.neovide")

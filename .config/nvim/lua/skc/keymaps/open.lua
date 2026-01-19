@@ -17,3 +17,6 @@ vim.keymap.set(
   [[<cmd>exe "!tmux new-session -d -s NVIM_VSCODE_ATTACH 'code " .. expand("%:p:h") .."'"<CR>]],
   { desc = "Dude what" }
 )
+
+-- Diagnostic keymaps
+vim.keymap.set("n", "<Leader>od", vim.diagnostic.setloclist, { desc = "[O]pen [D]iagnostics to quickfix list" })

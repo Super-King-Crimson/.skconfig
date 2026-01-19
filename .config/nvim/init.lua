@@ -1,5 +1,7 @@
 vim.g.mapleader = " "
-vim.g.maplocalleader = " "
+
+vim.g.maplocalleader = "s"
+vim.keymap.set("", "s", "<Nop>", { silent = true, noremap = true })
 
 vim.g.have_nerd_font = true
 

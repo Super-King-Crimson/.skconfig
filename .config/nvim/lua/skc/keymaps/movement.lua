@@ -1,9 +1,11 @@
 -- [J]ump around text faster
--- vim.keymap.set("", "<leader>jj", "/^\\s*$\\|\\%$\\|\\%^<CR><cmd>nohlsearch<CR>", { desc = "[J]ump up to next line" })
--- vim.keymap.set("", "<leader>jk", "?^\\s*$\\|\\%$\\|\\%^<CR><cmd>nohlsearch<CR>", { desc = "[J]ump down to next line" })
 vim.keymap.set("", "<leader>j", "}", { desc = "Jump down to next line" })
 vim.keymap.set("", "<leader>k", "{", { desc = "Jump up to next line" })
+vim.keymap.set("", "<leader>h", "[q", { desc = "Quickfix prev" })
+vim.keymap.set("", "<leader>l", "]q", { desc = "Quickfix next" })
 
+-- vim.keymap.set("", "<leader>jj", "/^\\s*$\\|\\%$\\|\\%^<CR><cmd>nohlsearch<CR>", { desc = "[J]ump up to next line" })
+-- vim.keymap.set("", "<leader>jk", "?^\\s*$\\|\\%$\\|\\%^<CR><cmd>nohlsearch<CR>", { desc = "[J]ump down to next line" })
 -- Better jk (spans wrapped lines)
 vim.keymap.set("", "j", "gj")
 vim.keymap.set("", "k", "gk")

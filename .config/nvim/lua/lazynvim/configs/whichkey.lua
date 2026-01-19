@@ -42,13 +42,35 @@ return {
       },
     },
 
+    triggers = {
+      { "<LocalLeader>", mode = "n" },
+      { "<auto>", mode = "nixsot" },
+    },
+
     -- Document existing key chains
     spec = {
+      { "<LocalLeader>j", group = "Previous tab" },
+      { "<LocalLeader>k", group = "Next tab" },
+      { "<LocalLeader>J", group = "First tab" },
+      { "<LocalLeader>K", group = "Last tab" },
+      { "<LocalLeader>H", group = "Move tab to first" },
+      { "<LocalLeader>h", group = "Move tab left" },
+      { "<LocalLeader>l", group = "Move tab right" },
+      { "<LocalLeader>L", group = "Move tab to end" },
+      { "<LocalLeader>n", group = "New tab" },
+      { "<LocalLeader>p", group = "Split tab" },
+      { "<LocalLeader>o", group = "Only tab" },
+      { "<LocalLeader>x", group = "Close tab" },
+      { "<LocalLeader><LocalLeader>", group = "Explore in new tab" },
+      { "<LocalLeader><Leader>", group = "Close Extras" },
+      { "<LocalLeader>c", group = "Close Extras" },
+
       { "<leader>s", group = "[S]earch" },
       { "<leader>t", group = "[T]oggle" },
       { "<leader>o", group = "[O]pen" },
-      { "<leader>j", group = "[J]ump" },
-      { "<leader>h", group = "Git [H]unk", mode = { "n", "v" } },
+      { "<leader>f", group = "[F]old" },
+      { "<leader>w", group = "[W]rite" },
+      { "<leader>?", group = "Which[?]" },
       { "<leader>n", group = "Jump to [N]eovim files", mode = { "n" } },
     },
   },

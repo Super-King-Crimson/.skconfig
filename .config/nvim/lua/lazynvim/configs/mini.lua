@@ -3,7 +3,10 @@ return { -- Collection of various small independent plugins/modules
   version = false,
   config = function()
     require("mini.ai").setup({ n_lines = 500 })
-    require("mini.surround").setup()
+
+    -- we'll re-enable this once we figure out how to
+    -- make it stop fighting my keymaps
+    -- require("mini.surround").setup()
     require("mini.comment").setup()
     require("mini.indentscope").setup()
     require("mini.move").setup()
@@ -29,6 +32,7 @@ return { -- Collection of various small independent plugins/modules
     MiniFiles.setup({
       mappings = {
         close = "<Esc>",
+        reset = ";",
         go_in_plus = "<CR>",
         synchronize = "<C-S>",
       },
@@ -50,7 +54,9 @@ return { -- Collection of various small independent plugins/modules
       if MiniFiles.get_explorer_state() then
         MiniFiles.close()
       else
-        variant()
+        if not pcall(variant) then
+          MiniFiles.open(nil, false)
+        end
       end
     end
 
@@ -58,14 +64,19 @@ return { -- Collection of various small independent plugins/modules
       miniFileToggle(true)
     end, { desc = "Explore directory of [l]ocal buffer" })
 
-    vim.keymap.set({ "", "i" }, "<C-e>", function()
+    vim.keymap.set({ "", "i" }, "<C-d>", function()
       miniFileToggle()
-    end, { desc = "[E]xplore current directory" })
+    end, { desc = "Explore current directory" })
 
-    vim.keymap.set("n", "ss", function()
+    vim.keymap.set("n", "<LocalLeader><LocalLeader>l", function()
       vim.cmd("tab sp")
       miniFileToggle(true)
-    end)
+    end, { desc = "Explore local directory in new tab" })
+
+    vim.keymap.set("n", "<LocalLeader><LocalLeader>d", function()
+      vim.cmd("tab sp")
+      miniFileToggle()
+    end, { desc = "Explore current directory in new tab" })
 
     require("mini.pairs").setup({
       modes = { command = true },

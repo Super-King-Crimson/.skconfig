@@ -1,1 +1,2 @@
-vim.lsp.enable("godot")
+-- Shouldn't need this, is activated in lspinstall
+-- vim.lsp.enable("godot")
