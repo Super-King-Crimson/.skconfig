@@ -2,6 +2,7 @@ if vim.g.neovide then
   local scale = 0.6
 
   vim.o.guifont = "FiraCode Nerd Font Mono Ret:h18:w-0.4"
+  vim.g.neovide_remember_window_size = true
   vim.g.neovide_scale_factor = scale
   vim.g.neovide_scroll_animation_length = 0.2
 

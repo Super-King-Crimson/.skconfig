@@ -27,6 +27,9 @@ vim.keymap.set("n", "<LocalLeader><Leader>l", "<cmd>.+1,$tabdo tabc<CR>")
 vim.keymap.set("n", "<LocalLeader>o", ":tabo<CR>")
 
 -- 5 tabs
+local altLocalLeader = "<A-" .. vim.g.maplocalleader .. ">"
+vim.keymap.set({ "", "!" }, altLocalLeader, "<Esc>g<Tab>")
+
 vim.keymap.set({ "", "!", "t" }, "<A-1>", "<cmd>1tabnext<CR>")
 vim.keymap.set({ "", "!", "t" }, "<A-2>", "<cmd>2tabnext<CR>")
 vim.keymap.set({ "", "!", "t" }, "<A-3>", "<cmd>3tabnext<CR>")
