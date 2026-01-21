@@ -206,6 +206,7 @@ export bn=$HOME/Binaries
 export bin="$HOME/.local/bin"
 export prj="$HOME/Documents/Projects"
 export nts="$HOME/Desktop/notes"
+export im="$HOME/IMPORTANT/"
 
 # Shell configuration
 shopt -u cdable_vars
