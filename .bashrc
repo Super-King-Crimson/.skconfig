@@ -217,6 +217,7 @@ alias ll='ls -alFh'
 alias la='ls -A'
 alias l='ls -CF'
 alias d='cd'
+alias v='nvim'
 
 alias skconfig='git --git-dir=$HOME/.skconfig/ --work-tree=$HOME'
 alias ptouch="install /dev/null -m"
