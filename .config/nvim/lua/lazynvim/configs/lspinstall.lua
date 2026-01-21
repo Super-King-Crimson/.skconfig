@@ -47,7 +47,7 @@ return {
   {
     "seblyng/roslyn.nvim",
     dependencies = {
-      { "khoido2003/roslyn-filewatch.nvim", opts = {} },
+      "khoido2003/roslyn-filewatch.nvim",
     },
     config = function()
       require("roslyn_filewatch").setup({
@@ -56,7 +56,7 @@ return {
 
       require("roslyn").setup({
         lock_target = true,
-        filewatching = "off",
+        silent = true,
         choose_target = function(targets)
           if #targets == 1 then
             return targets[1]

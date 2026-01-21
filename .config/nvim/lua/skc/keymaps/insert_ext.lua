@@ -5,11 +5,13 @@ vim.keymap.set({ "!", "t" }, "<A-k>", "<Up>")
 vim.keymap.set({ "!", "t" }, "<A-l>", "<Right>")
 vim.keymap.set({ "!", "t" }, "<A-n>", "<C-Right>")
 vim.keymap.set({ "!", "t" }, "<A-p>", "<C-Left>")
+vim.keymap.set({ "!", "t" }, "<A-,>", "<Home>")
+vim.keymap.set({ "!", "t" }, "<A-.>", "<End>")
 
 vim.keymap.set("i", "<A-c>", "<C-g>u<Esc>C")
 vim.keymap.set("i", "<A-d>", "<C-g>u<Esc>cc")
 vim.keymap.set("i", "<A-n>", "<Esc>ea")
-vim.keymap.set("i", "<A-p>", "<Esc>gea")
+vim.keymap.set("i", "<A-p>", "<Esc>bi")
 
 -- Backspacing and undos
 vim.keymap.set({ "!", "t" }, "<C-h>", "<C-w>")

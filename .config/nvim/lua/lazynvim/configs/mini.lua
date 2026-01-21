@@ -28,8 +28,25 @@ return { -- Collection of various small independent plugins/modules
     })
 
     local MiniFiles = require("mini.files")
+    local ignore = {
+      ".cs.meta",
+      ".meta",
+      ".asset",
+      ".asset.meta",
+    }
 
     MiniFiles.setup({
+      content = {
+        filter = function(fs_entry)
+          for _, banned in ipairs(ignore) do
+            if string.match(fs_entry.name, banned) then
+              return false
+            end
+          end
+
+          return true
+        end,
+      },
       mappings = {
         close = "<Esc>",
         reset = ";",

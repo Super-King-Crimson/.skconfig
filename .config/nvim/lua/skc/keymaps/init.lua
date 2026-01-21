@@ -1,7 +1,9 @@
 -- Trust this is useful
 vim.keymap.set("n", "<Leader>.", "<cmd>cd %:h<CR>", { desc = "Set workspace directory to that of current buffer" })
 vim.keymap.set("n", "<Leader>|", "<cmd>tcd %:h<CR>", { desc = "Set tab directory to that of current buffer" })
+
 vim.keymap.set("n", "<Leader>F", "<cmd>wincmd o<CR>", { desc = "[F]ocus!" })
+vim.keymap.set("n", "<Leader>'", "`")
 
 require("skc/keymaps/insert_ext")
 require("skc/keymaps/macro")
@@ -15,3 +17,4 @@ require("skc/keymaps/tabs")
 require("skc/keymaps/terminal_ext")
 require("skc/keymaps/fold")
 require("skc/keymaps/which")
+require("skc/keymaps/visual_ext")

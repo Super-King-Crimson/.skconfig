@@ -1,15 +1,9 @@
 local SESSION_DIR = "/home/skc/Documents/nvimsessions/"
 local defaultSessionName = "latest"
+local pointedTo = nil
 local currSession = nil
 local silent = false
 local debugMode = false
-
--- for a function a bit down don't worry abt it
-local pickers
-local finders
-local conf
-local actions
-local action_state
 
 local function logMsg(msg, logLevel)
   if silent then
@@ -25,15 +19,27 @@ local function logDebug(debugMsg, logLevel)
   end
 end
 
-local function sessionNameToFullPath(name)
-  local path = SESSION_DIR .. name
-
-  return path .. ".vim"
+local function getFullPathFromSessionName(name)
+  return SESSION_DIR .. name .. ".vim"
 end
 
-local function fullPathToSessionName(path)
+local function getSessionNameFromFullPath(path)
   local relPath = vim.fn.slice(path, vim.fn.strcharlen(SESSION_DIR))
   return vim.fn.fnamemodify(relPath, ":r")
+end
+
+local function getSymLinkTarget(link)
+  local out = vim.fn.execute("!readlink " .. link)
+
+  -- I'm not taking questions on how this works
+  -- TODO: make this shit less shitty
+  local linkedFile = vim.fn.split(out, "\n")[3]
+
+  -- Output: "\n:!readlink /home/skc/Documents/testnvimsessions/latest.vim\r\n\n/home/skc/Documents/testnvimsessions/nvimconfig.vim\n"
+  -- Extracted path to link: not found :(
+  if linkedFile and vim.uv.fs_stat(linkedFile) then
+    return getSessionNameFromFullPath(linkedFile)
+  end
 end
 
 local function tableContains(tab, val)
@@ -52,7 +58,7 @@ local function writeAutosession(name)
     return
   end
 
-  local sessionPath = sessionNameToFullPath(name)
+  local sessionPath = getFullPathFromSessionName(name)
 
   local parentDir = vim.fn.fnamemodify(sessionPath, ":h")
   local dirExists = vim.fn.isdirectory(parentDir) == 1
@@ -62,12 +68,9 @@ local function writeAutosession(name)
     vim.cmd("silent !mkdir -p " .. parentDir)
   end
 
-  -- sorry we can't ever save the terminals might as well keep a clean slate between wkspaces
   vim.cmd("silent mksession! " .. sessionPath)
 
-  if not silent then
-    logDebug("Wrote session" .. sessionPath, vim.log.levels.INFO)
-  end
+  logDebug("Wrote session" .. sessionPath, vim.log.levels.INFO)
 
   return sessionPath
 end
@@ -77,8 +80,14 @@ local function changeWriteAutoSession(name)
     error("provide a valid session name")
   end
 
+  if name == defaultSessionName and currSession == nil then
+    -- unhook from any symlink and treat as a temporary standalone session
+    vim.cmd("silent! !rm " .. getFullPathFromSessionName(defaultSessionName))
+  end
+
   currSession = name
-  return writeAutosession(name)
+
+  writeAutosession(currSession)
 end
 
 local function getAutosessions()
@@ -86,7 +95,7 @@ local function getAutosessions()
   local sessionNames = {}
 
   for i, sessionPath in ipairs(sessions) do
-    sessionNames[i] = fullPathToSessionName(sessionPath)
+    sessionNames[i] = getSessionNameFromFullPath(sessionPath)
   end
 
   return sessionNames
@@ -102,13 +111,21 @@ local function loadAutosession(sessionName)
     error(sessionName .. " is not a valid session name")
   end
 
+  vim.cmd("silent! %bwipeout!")
+  vim.cmd("silent! source " .. getFullPathFromSessionName(sessionName))
+
   currSession = sessionName
 
-  vim.cmd("silent! %bwipeout!")
-  vim.cmd("silent! source " .. sessionNameToFullPath(sessionName))
   logMsg("Successfully sourced " .. sessionName, vim.log.levels.INFO)
 end
 
+-- for a function a bit down don't worry abt it
+local pickers
+local finders
+local conf
+local actions
+
+local action_state
 vim.api.nvim_create_autocmd("User", {
   pattern = "LazyLoad",
   callback = function(event)
@@ -124,7 +141,8 @@ vim.api.nvim_create_autocmd("User", {
 
 local function fuzzyFindPrompt(items, callback)
   if #items == 0 then
-    error("There are no autosessions")
+    logMsg("There are no autosessions", vim.log.levels.ERROR)
+    return
   end
 
   if not pickers then
@@ -132,7 +150,7 @@ local function fuzzyFindPrompt(items, callback)
     return
   end
 
-  logDebug("options: ", table.concat(items, " "))
+  logDebug("options: " .. table.concat(items, " | "), vim.log.levels.INFO)
 
   local opts = {
     prompt_title = "Session Selection",
@@ -196,6 +214,7 @@ local function loadAutosessionFn(args)
 
   loadAutosession(name)
 end
+
 vim.api.nvim_create_user_command("LoadAutosession", loadAutosessionFn, {
   desc = "Load a session that will be written to upon filewrite",
   nargs = "?",
@@ -205,6 +224,17 @@ vim.api.nvim_create_user_command("LoadAutosession", loadAutosessionFn, {
 vim.keymap.set("n", "<Leader>O", loadAutosessionFn, { desc = "[O]pen previous session" })
 
 local function whichAutosessionFn()
+  -- is default session a symlink to a different session
+  if currSession == defaultSessionName then
+    local fullPath = getFullPathFromSessionName(defaultSessionName)
+    local potentialTarget = getSymLinkTarget(fullPath)
+
+    if potentialTarget then
+      print("Session: " .. defaultSessionName .. " > " .. potentialTarget)
+      return
+    end
+  end
+
   print("Session: " .. (currSession or "none"))
 end
 vim.api.nvim_create_user_command("WhichAutosession", whichAutosessionFn, {
@@ -221,16 +251,34 @@ end
 
 vim.keymap.set("n", "<Leader>ws", changeWriteAutoSessionFromInput, { desc = "[W]rite [S]ession" })
 
-vim.api.nvim_create_user_command("EditAutosessions", "e " .. sessionNameToFullPath(defaultSessionName), {
-  desc = "Output the name of your current session",
+local function editAutosessions()
+  vim.cmd("edit " .. SESSION_DIR)
+end
+vim.api.nvim_create_user_command("EditAutosessions", editAutosessions, {
+  desc = "Go to directory of autosessions for easy deletion, renaming, etc.",
 })
 vim.keymap.set("n", "<Leader>na", "<cmd>EditAutosessions<CR>", { desc = "[N]eovim [A]utosessions" })
 
--- in case i wanna add another write condition
 local augroup = vim.api.nvim_create_augroup("skc-auto-write-session", { clear = true })
 vim.api.nvim_create_autocmd({ "BufWritePost" }, {
   group = augroup,
   callback = function()
     changeWriteAutoSession(currSession or defaultSessionName)
+  end,
+})
+
+vim.api.nvim_create_autocmd({ "VimLeave" }, {
+  group = augroup,
+  callback = function()
+    if currSession and currSession ~= defaultSessionName then
+      vim.cmd("silent! !rm " .. getFullPathFromSessionName(defaultSessionName))
+
+      vim.cmd(
+        "silent! !ln -sf "
+          .. getFullPathFromSessionName(currSession)
+          .. " "
+          .. getFullPathFromSessionName(defaultSessionName)
+      )
+    end
   end,
 })
