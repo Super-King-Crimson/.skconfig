@@ -1,6 +1,4 @@
 -- Options --
-vim.o.sessionoptions = "blank,buffers,curdir,folds,help,options,tabpages,winsize"
-
 vim.o.foldcolumn = "1"
 vim.o.foldlevel = 99
 vim.o.foldlevelstart = 99
