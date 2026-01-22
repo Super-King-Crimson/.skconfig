@@ -22,8 +22,8 @@ return {
         "cssmodules-language-server",
         "css-lsp",
         "superhtml",
+        "clangd",
         "typescript-language-server",
-        "markdown-oxide",
       }
 
       local external_lsp_tools = {
