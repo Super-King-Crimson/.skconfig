@@ -22,7 +22,7 @@ return {
       direction = "float",
       float_opts = {
         border = "rounded",
-        winblend = 30,
+        winblend = 10,
         zindex = 10,
         title_pos = "right",
         height = getHeight,
