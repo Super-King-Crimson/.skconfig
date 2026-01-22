@@ -8,8 +8,9 @@ vim.keymap.set({ "!", "t" }, "<A-p>", "<C-Left>")
 vim.keymap.set({ "!", "t" }, "<A-,>", "<Home>")
 vim.keymap.set({ "!", "t" }, "<A-.>", "<End>")
 
-vim.keymap.set("i", "<A-c>", "<C-g>u<Esc>C")
+vim.keymap.set("i", "<A-c>", "<C-g>u<Esc>lC")
 vim.keymap.set("i", "<A-d>", "<C-g>u<Esc>cc")
+vim.keymap.set("i", "<A-e>", "<C-g>u<Esc>d^i")
 vim.keymap.set("i", "<A-n>", "<Esc>ea")
 vim.keymap.set("i", "<A-p>", "<Esc>bi")
 
