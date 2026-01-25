@@ -1,6 +1,6 @@
 {
     "version": 0,
-    "date": "2026-01-02 14:53:56",
+    "date": "2026-01-25 18:50:03",
     "url": "moz-extension://1dede822-f343-4f64-8b9d-9799553fa226/",
     "manifest": {
         "author": "Yomidevs",
@@ -25,7 +25,7 @@
         "manifest_version": 3,
         "name": "Yomitan Popup Dictionary",
         "short_name": null,
-        "version": "25.12.22.0",
+        "version": "25.12.31.0",
         "background": {
             "page": "moz-extension://1dede822-f343-4f64-8b9d-9799553fa226/background.html",
             "preferred_environment": null,
@@ -212,7 +212,8 @@
             "unlimitedStorage",
             "declarativeNetRequest",
             "scripting",
-            "contextMenus"
+            "contextMenus",
+            "clipboardRead"
         ]
     },
     "options": {
@@ -296,7 +297,7 @@
                     "scanning": {
                         "inputs": [
                             {
-                                "include": "alt",
+                                "include": "ctrl",
                                 "exclude": "mouse0",
                                 "types": {
                                     "mouse": true,
