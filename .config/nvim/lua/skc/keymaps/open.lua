@@ -19,4 +19,11 @@ vim.keymap.set(
 )
 
 -- Diagnostic keymaps
-vim.keymap.set("n", "<Leader>od", vim.diagnostic.setloclist, { desc = "[O]pen [D]iagnostics to quickfix list" })
+vim.keymap.set(
+  "n",
+  "<Leader>od",
+  vim.diagnostic.setloclist,
+  { desc = "[O]pen [D]iagnostics to location list (']l' to navigate)" }
+)
+
+vim.keymap.set("n", "<Leader>oa", vim.lsp.buf.code_action, { desc = "[O]pen Code [A]ctions" })

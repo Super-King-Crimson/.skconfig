@@ -5,6 +5,11 @@ return {
   },
 
   config = function()
-    vim.keymap.set("n", "<Leader>op", ":LivePreview start<CR>", { desc = "[O]pen Live [P]review" })
+    vim.keymap.set(
+      "n",
+      "<Leader>op",
+      "<cmd>LivePreview close<CR><cmd>LivePreview start<CR>",
+      { desc = "[O]pen Live [P]review" }
+    )
   end,
 }

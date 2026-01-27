@@ -36,4 +36,4 @@ end
 -- Esc + Esc to exit terminal (VERY IMPORTANT!)
 vim.keymap.set({ "", "t" }, "<C-x><C-x>", "<C-\\><C-n>", { desc = "Universal Escape" })
 vim.keymap.set("t", "<C-S-V>", "<C-\\><C-n>pA", { desc = "Paste" })
-vim.keymap.set("t", "<A-o>", changeCwdToCurrentTerminal)
+vim.keymap.set("t", "<C-A-o>", changeCwdToCurrentTerminal)

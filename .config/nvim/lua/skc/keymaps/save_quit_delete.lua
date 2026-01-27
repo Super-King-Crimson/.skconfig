@@ -22,12 +22,7 @@ vim.keymap.set({ "", "!", "t" }, "<C-f>a", "<cmd>qa<CR>", { desc = "Quit [A]ll" 
 vim.keymap.set({ "", "!", "t" }, "<C-f>!d", "<cmd>bdelete<CR>", { desc = "Force delete the current buffer" })
 vim.keymap.set({ "", "!", "t" }, "<C-f>!f", "<cmd>q!<CR>", { desc = "Force Quit" })
 
-vim.keymap.set({ "", "!", "t" }, "<C-f>!yf", "<cmd>qa!<CR>", { desc = "Force Quit All (are you sure?)" })
-vim.keymap.set(
-  { "", "!", "t" },
-  "<C-f>!yb",
-  "<cmd>%bdelete!<CR>",
-  { desc = "Force delete ALL buffers (are you sure?)" }
-)
+vim.keymap.set({ "", "!", "t" }, "<C-f>!a", "<cmd>qa!<CR>", { desc = "Force Quit All (are you sure?)" })
+vim.keymap.set({ "", "!", "t" }, "<C-f>!b", "<cmd>%bdelete!<CR>", { desc = "Force delete ALL buffers (are you sure?)" })
 
 vim.keymap.set({ "", "!", "t" }, "<C-f>F", farewell, { desc = "Catch you later! 👋" })
