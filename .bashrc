@@ -243,7 +243,7 @@ alias pse="ps -e -o pid,command"
 # don't ask me why this works... creates a file with specified octal permission code
 alias ptouch="install /dev/null -m"
 
-# useful flags: o (nly match), n (line numbers), E (use extended regex), i(invert match)
+# useful flags: o (nly match), n (line numbers), E (use extended regex), v (invert match)
 alias grep='grep --color=auto -E'
 
 # PATH modification
