@@ -151,7 +151,7 @@ encrypt_archive_symmetrical_gpg() {
 		echo "Please delete the original directory."
 	fi
 }
-alias enc-sym='encrypt_archive_symmetrical_gpg'
+alias enc='encrypt_archive_symmetrical_gpg'
 
 # Decrypt and extract a symmetrical GPG archive
 decrypt_extract_symmetrical_gpg() {
@@ -183,8 +183,9 @@ decrypt_extract_symmetrical_gpg() {
 		echo "Remember to re-encrypt this file after you are done."
 	fi
 }
-alias dec-sym='decrypt_extract_symmetrical_gpg'
+alias dec='decrypt_extract_symmetrical_gpg'
 
+# makes cd also run ls
 cd() {
   builtin cd $@
   ls
@@ -203,10 +204,12 @@ export pc=$HOME/Pictures
 export vd=$HOME/Videos
 export as=$HOME/Assets
 export bn=$HOME/Binaries
+export so="$HOME/src"
+export im="$HOME/IMPORTANT/"
+export nts="$HOME/Desktop/notes"
 export bin="$HOME/.local/bin"
 export prj="$HOME/Documents/Projects"
-export nts="$HOME/Desktop/notes"
-export im="$HOME/IMPORTANT/"
+export tch="$HOME/src/scratch"
 
 # Shell configuration
 shopt -u cdable_vars
@@ -219,10 +222,29 @@ alias l='ls -CF'
 alias d='cd'
 alias v='nvim'
 
-alias skconfig='git --git-dir=$HOME/.skconfig/ --work-tree=$HOME'
+# other useful flags:
+#   tree: I ignore-pat, L depth, i (no indent lines), f(ull relative path) 
+
+# Less simple aliases
+# dammit i cant get autocomplete working
+# FUCK BASH
+skconfig() { 
+  git --git-dir="$HOME/.skconfig/" --work-tree="$HOME" "$@"
+}
+
+# -R (allow color display, required to work with bat)
+alias lesser="less -R"
+alias bat='batcat --color=always'
+
+# literally just a filter (-o allows mapping to output)
+# ps -e is equal to ps aux btw (list all processes: you probably want to run this thru grep -E)
+alias pse="ps -e -o pid,command"
+
+# don't ask me why this works... creates a file with specified octal permission code
 alias ptouch="install /dev/null -m"
-alias gdt="godot"
-alias ahk-start="nohup ahk /home/skc/Binaries/startup/bin/ahk-setup.sh > /dev/null 2>&1 &"
+
+# useful flags: o (nly match), n (line numbers), E (use extended regex), i(invert match)
+alias grep='grep --color=auto -E'
 
 # PATH modification
 export PATH="$HOME/.local/bin:$PATH"

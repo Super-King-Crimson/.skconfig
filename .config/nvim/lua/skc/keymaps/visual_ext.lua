@@ -1,1 +1,1 @@
-vim.keymap.set("n", "vv", "v$")
+vim.keymap.set("n", "vv", "v$h")

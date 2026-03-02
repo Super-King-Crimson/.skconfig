@@ -35,5 +35,6 @@ end
 -- Create a user command for easy ccess
 -- Esc + Esc to exit terminal (VERY IMPORTANT!)
 vim.keymap.set({ "", "t" }, "<C-x><C-x>", "<C-\\><C-n>", { desc = "Universal Escape" })
-vim.keymap.set("t", "<C-S-V>", "<C-\\><C-n>pA", { desc = "Paste" })
+vim.keymap.set("t", "<c-y>", "<c-\\><c-n>mq? \\$ <CR>f lv`qy<cmd>noh<CR>i", { desc = "yank current command" })
+vim.keymap.set("t", "<C-V>", "<C-\\><C-n>pi", { desc = "Paste" })
 vim.keymap.set("t", "<C-A-o>", changeCwdToCurrentTerminal)

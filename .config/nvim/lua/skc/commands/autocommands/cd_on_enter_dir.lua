@@ -8,7 +8,13 @@ local function is_weirdass_uri(uri)
 end
 
 local function try_change_dir(args)
-  local path = vim.api.nvim_buf_get_name(args.buf)
+  local success, path = pcall(function()
+    return vim.api.nvim_buf_get_name(args.buf)
+  end)
+
+  if not success then
+    return
+  end
 
   if is_weirdass_uri(path) then
     return

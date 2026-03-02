@@ -20,16 +20,19 @@ vim.o.incsearch = true
 vim.o.number = true
 vim.o.relativenumber = true
 
-vim.o.shiftwidth = 0
-vim.o.tabstop = 2
-vim.o.softtabstop = 2
+-- DON'T CHANGE THESE! when softtabstop is negative, shiftwidth is used!
+vim.o.tabstop = 8
+vim.o.softtabstop = -1
+
+-- you can change these :)
+vim.o.shiftwidth = 4
 vim.o.expandtab = true
 
 vim.o.mouse = "a"
 vim.o.showmode = false
 
 vim.schedule(function()
-  vim.o.clipboard = "unnamedplus"
+    vim.o.clipboard = "unnamedplus"
 end)
 
 vim.o.breakindent = true

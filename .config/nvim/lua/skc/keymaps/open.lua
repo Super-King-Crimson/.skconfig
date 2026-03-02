@@ -13,17 +13,17 @@ vim.keymap.set("n", "<leader>ob", [[<cmd>exe '!firefox ' .. expand("%:p")<CR>]],
 -- requires tmux and vscodium
 vim.keymap.set(
   "n",
-  "<leader>oc",
-  [[<cmd>exe "!tmux new-session -d -s NVIM_VSCODE_ATTACH '/home/skc/Downloads/Persistent/VSCode-linux-x64/code " .. expand("%:p:h") .."'"<CR>]],
-  { desc = "Dude what" }
+  "<leader>of",
+  [[<cmd>lua print("hey go implement the floating window plugin thingy!!!")<CR>]],
+  { desc = "[O]pen floating [W]indow" }
 )
 
 -- Diagnostic keymaps
 vim.keymap.set(
   "n",
   "<Leader>od",
-  vim.diagnostic.setloclist,
-  { desc = "[O]pen [D]iagnostics to location list (']l' to navigate)" }
+  vim.diagnostic.setqflist,
+  { desc = "[O]pen [D]iagnostics to location list" }
 )
 
 vim.keymap.set("n", "<Leader>oa", vim.lsp.buf.code_action, { desc = "[O]pen Code [A]ctions" })

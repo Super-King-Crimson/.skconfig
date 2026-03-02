@@ -1,13 +1,15 @@
 -- [J]ump around text faster
-vim.keymap.set("n", "<Leader>h", "[q", { desc = "Quickfix prev", remap = true })
-vim.keymap.set("n", "<Leader>l", "]q", { desc = "Quickfix next", remap = true })
+vim.keymap.set("n", "<Leader>h", "[q", { desc = "Quickfix list prev", remap = true })
+vim.keymap.set("n", "<Leader>l", "]q", { desc = "Quickfix list next", remap = true })
+vim.keymap.set("n", "H", "[l", { desc = "Location list prev", remap = true })
+vim.keymap.set("n", "L", "]l", { desc = "Location next next", remap = true })
 
--- vim.keymap.set("", "<leader>jj", "/^\\s*$\\|\\%$\\|\\%^<CR><cmd>nohlsearch<CR>", { desc = "[J]ump up to next line" })
--- vim.keymap.set("", "<leader>jk", "?^\\s*$\\|\\%$\\|\\%^<CR><cmd>nohlsearch<CR>", { desc = "[J]ump down to next line" })
+vim.keymap.set("", "<leader>j", "}", { desc = "Jump down to empty line" })
+vim.keymap.set("", "<leader>k", "{", { desc = "Jump up to empty line" })
+
 -- Better jk (spans wrapped lines)
 vim.keymap.set("", "j", "gj")
 vim.keymap.set("", "k", "gk")
-
 -- Not in operator pending mode (i like my dj) (spans wrapped lines)
 vim.keymap.del("o", "j")
 vim.keymap.del("o", "k")
@@ -16,7 +18,6 @@ vim.keymap.del("o", "k")
 vim.keymap.set("", "gj", "j")
 vim.keymap.set("", "gk", "k")
 
--- gh and gl go to beginning and end of current line (tf even is $ and ^)
 vim.keymap.set("", "gh", "^", { desc = "[G]o to beginning of line" })
 vim.keymap.set("", "gl", "$", { desc = "[G]o to end of line" })
 
