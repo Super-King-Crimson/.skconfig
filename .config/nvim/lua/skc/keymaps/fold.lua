@@ -1,10 +1,3 @@
-vim.keymap.set("n", "<Leader>ff", "za", { desc = "[F]old toggle" })
-
-vim.keymap.set("n", "<Leader>ft", "<cmd>%foldclose<CR>", { desc = "[F]old [T]op level of folds" })
-vim.keymap.set("n", "<Leader>fr", "zR", { desc = "[F]old [R]educe" })
-vim.keymap.set("n", "<Leader>fm", "zM", { desc = "[F]old [M]ore" })
-
-vim.keymap.set("n", "<Leader>fs", "zR<cmd>%foldclose<CR>", { desc = "Set ideal [F]old [S]tate" })
-
-vim.keymap.set("", "<leader>fj", "]z", { desc = "Jump to end of current fold" })
-vim.keymap.set("", "<leader>fk", "[z", { desc = "Jump to beginning of current fold" })
+vim.keymap.set("n", "<Leader>ff", "zA", { desc = "Toggle fold under cursor recursively" })
+vim.keymap.set("n", "<Leader>fa", "zM", { desc = "[F]old [A]ll" })
+vim.keymap.set("n", "<Leader>fo", "zR", { desc = "[F]old [O]pen all" })

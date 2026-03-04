@@ -1,9 +1,9 @@
 local IGNORE_FILES = {
-  ".cs.meta",
-  ".cs.uid",
-  ".meta",
-  ".asset",
-  ".asset.meta",
+  "**.cs.meta",
+  "**.cs.uid",
+  "**.meta",
+  "**.asset",
+  "**.asset.meta",
 }
 
 local function miniFileToggle(from_current_buffer)
@@ -12,8 +12,8 @@ local function miniFileToggle(from_current_buffer)
   end
 
   local variant = from_current_buffer
-      and function() MiniFiles.open(vim.fn.fnamemodify(vim.api.nvim_buf_get_name(0), ":p:h"), false) end
-      or function() MiniFiles.open(nil, false) end
+      and function() MiniFiles.open(vim.fn.fnamemodify(vim.api.nvim_buf_get_name(0), ":p:h")) end
+      or function() MiniFiles.open() end
 
   if MiniFiles.get_explorer_state() then
     MiniFiles.close()
@@ -24,25 +24,40 @@ local function miniFileToggle(from_current_buffer)
   end
 end
 
+local function miniFilter(fs_entry)
+  for _, banned in ipairs(IGNORE_FILES) do
+    if string.find(fs_entry.name, vim.fn.glob2regpat(banned)) then
+      return false
+    end
+
+    return true
+  end
+end
+
 local MiniFiles = require("mini.files")
 
 MiniFiles.setup({
   content = {
-    filter = function(fs_entry)
-      for _, banned in ipairs(IGNORE_FILES) do
-        if string.match(fs_entry.name, banned) then
-          return false
-        end
-      end
-
-      return true
-    end,
+    filter = miniFilter
+  },
+  options = {
+    permanent_delete = false,
+    use_as_default_explorer = true,
   },
   mappings = {
-    close = "<Esc>",
-    reset = ";",
-    go_in_plus = "<CR>",
+    go_in       = 'l',
+    go_out      = 'h',
+    go_in_plus  = "<CR>",
+    go_out_plus = '',
     synchronize = "<C-S>",
+    close       = "<Esc>",
+    reset       = ";",
+    mark_set    = 'm',
+    mark_goto   = "'",
+    reveal_cwd  = '@',
+    show_help   = 'g?',
+    trim_left   = '<',
+    trim_right  = '>',
   },
 })
 

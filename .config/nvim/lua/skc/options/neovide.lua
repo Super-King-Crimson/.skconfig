@@ -1,12 +1,12 @@
 if vim.g.neovide then
-  local scale = 0.6
+  local scale = 0.5
 
   vim.o.guifont = "FiraCode Nerd Font Mono Ret:h18:w-0.4"
   vim.g.neovide_scale_factor = scale
   vim.g.neovide_scroll_animation_length = 0.2
 
   vim.opt.guicursor =
-    "n-v-c:block-blinkwait200-blinkoff500-blinkon500,i-ci-ve:ver25-blinkwait200-blinkoff500-blinkon500,r-cr:hor20-blinkwait200-blinkoff500-blinkon500"
+  "n-v-c:block-blinkwait200-blinkoff500-blinkon500,i-ci-ve:ver25-blinkwait200-blinkoff500-blinkon500,r-cr:hor20-blinkwait200-blinkoff500-blinkon500"
 
   vim.g.neovide_cursor_animation_length = 0.05
   vim.g.neovide_cursor_trail_size = 0.3

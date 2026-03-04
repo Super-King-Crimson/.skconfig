@@ -2,22 +2,12 @@ local SESSION_DIR = "/home/skc/Documents/nvimsessions/"
 local defaultSessionName = "latest"
 local pointedTo = nil
 local currSession = nil
-local silent = false
-local debugMode = false
 
-local function logMsg(msg, logLevel)
-  if silent then
-    return
-  end
-
-  vim.notify(msg, logLevel or vim.log.levels.INFO)
-end
-
-local function logDebug(debugMsg, logLevel)
-  if debugMode then
-    logMsg("DEBUG: " .. debugMsg, logLevel)
-  end
-end
+local LabTools = require("labtools")
+local logMsg = LabTools.logMsg
+local logDebug = LabTools.logDebug
+local tableContains = LabTools.tableContains
+local fuzzyFindPrompt = LabTools.fuzzyFindPrompt
 
 local function getFullPathFromSessionName(name)
   return SESSION_DIR .. name .. ".vim"
@@ -40,16 +30,6 @@ local function getSymLinkTarget(link)
   if linkedFile and vim.uv.fs_stat(linkedFile) then
     return getSessionNameFromFullPath(linkedFile)
   end
-end
-
-local function tableContains(tab, val)
-  for _, value in ipairs(tab) do
-    if value == val then
-      return true
-    end
-  end
-
-  return false
 end
 
 local function writeAutosession(name)
@@ -119,61 +99,6 @@ local function loadAutosession(sessionName)
   logMsg("Successfully sourced " .. sessionName, vim.log.levels.INFO)
 end
 
--- for a function a bit down don't worry abt it
-local pickers
-local finders
-local conf
-local actions
-
-local action_state
-vim.api.nvim_create_autocmd("User", {
-  pattern = "LazyLoad",
-  callback = function(event)
-    if event.data == "telescope.nvim" then
-      pickers = require("telescope.pickers")
-      finders = require("telescope.finders")
-      conf = require("telescope.config").values
-      actions = require("telescope.actions")
-      action_state = require("telescope.actions.state")
-    end
-  end,
-})
-
-local function fuzzyFindPrompt(items, callback)
-  if #items == 0 then
-    logMsg("There are no autosessions", vim.log.levels.ERROR)
-    return
-  end
-
-  if not pickers then
-    error("You must have telescope installed to fuzzy find sessions.")
-    return
-  end
-
-  logDebug("options: " .. table.concat(items, " | "), vim.log.levels.INFO)
-
-  local opts = {
-    prompt_title = "Session Selection",
-    finder = finders.new_table({
-      results = items,
-    }),
-    sorter = conf.generic_sorter({}),
-    attach_mappings = function(prompt_bufnr, _)
-      actions.select_default:replace(function()
-        actions.close(prompt_bufnr)
-        local selection = action_state.get_selected_entry()
-
-        if selection then
-          callback(items[selection.index])
-        end
-      end)
-      return true
-    end,
-  }
-
-  pickers.new({}, opts):find()
-end
-
 local function loadAutosessionFromFuzzyFind()
   local sessionList = getAutosessions()
 
@@ -221,7 +146,7 @@ vim.api.nvim_create_user_command("LoadAutosession", loadAutosessionFn, {
   force = true,
   complete = getAutosessions,
 })
-vim.keymap.set("n", "<Leader>O", loadAutosessionFn, { desc = "[O]pen previous session" })
+vim.keymap.set("n", "<Leader>ol", loadAutosessionFn, { desc = "[O]pen [L]atest session" })
 
 local function whichAutosessionFn()
   -- is default session a symlink to a different session
@@ -254,9 +179,11 @@ vim.keymap.set("n", "<Leader>ws", changeWriteAutoSessionFromInput, { desc = "[W]
 local function editAutosessions()
   vim.cmd("edit " .. SESSION_DIR)
 end
+
 vim.api.nvim_create_user_command("EditAutosessions", editAutosessions, {
   desc = "Go to directory of autosessions for easy deletion, renaming, etc.",
 })
+
 vim.keymap.set("n", "<Leader>na", "<cmd>EditAutosessions<CR>", { desc = "[N]eovim [A]utosessions" })
 
 local augroup = vim.api.nvim_create_augroup("skc-auto-write-session", { clear = true })
@@ -275,9 +202,9 @@ vim.api.nvim_create_autocmd({ "VimLeave" }, {
 
       vim.cmd(
         "silent! !ln -sf "
-          .. getFullPathFromSessionName(currSession)
-          .. " "
-          .. getFullPathFromSessionName(defaultSessionName)
+        .. getFullPathFromSessionName(currSession)
+        .. " "
+        .. getFullPathFromSessionName(defaultSessionName)
       )
     end
   end,

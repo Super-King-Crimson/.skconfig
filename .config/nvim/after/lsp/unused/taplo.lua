@@ -13,5 +13,15 @@
 return {
   cmd = { 'taplo', 'lsp', 'stdio' },
   filetypes = { 'toml' },
+  settings = {
+    evenBetterToml = {
+      schema = {
+        -- add additional schemas
+        associations = {
+          ['example\\.toml$'] = 'https://json.schemastore.org/example.json',
+        }
+      }
+    }
+  },
   root_markers = { '.taplo.toml', 'taplo.toml', '.git' },
 }

@@ -5,10 +5,16 @@ local FORMATTERS_BY_FT = {
   css = { "prettier" },
 }
 
+local AUTOFORMAT_DISABLED_FT = {
+  cpp = true,
+  lua = true,
+}
+
 local ENSURE_INSTALLED = {
   servers = {
-    "lua-language-server",
+    "emmylua_ls",
     "luau-lsp",
+    -- "lua-language-server",
     "rust-analyzer",
     "css-variables-language-server",
     "cssmodules-language-server",
@@ -16,7 +22,7 @@ local ENSURE_INSTALLED = {
     "superhtml",
     "clangd",
     "typescript-language-server",
-    "roslyn"
+    "roslyn",
   },
 
   linters = {
@@ -33,10 +39,6 @@ local EXTERNAL = {
   debuggers = {},
   formatters = {},
   linters = {},
-}
-
-local AUTOFORMAT_DISABLED_FT = {
-  cpp = true,
 }
 
 -- only flattens 2D arrays/tables (only flattens the first level)
@@ -96,10 +98,19 @@ return {
     opts = {
       snippets = { preset = "mini_snippets" },
       keymap = { preset = "default" },
-      fuzzy = { implementation = "prefer_rust_with_warning" },
+      fuzzy = {
+        frecency = {
+          enabled = false
+        },
+        sorts = {
+          "score",
+          "sort_text",
+          "exact",
+        },
+        implementation = "prefer_rust_with_warning"
+      },
       appearance = { nerd_font_variant = 'mono' },
-      completion = { documentation = { auto_show = true } },
-      signature = { enabled = true },
+      completion = { documentation = { auto_show = false } },
 
       sources = {
         default = { "lsp", "path", "snippets", "buffer" },
@@ -148,6 +159,18 @@ return {
           return targets[1]
         end
       end,
+    },
+
+    {
+      "ray-x/lsp_signature.nvim",
+      event = "InsertEnter",
+      opts = {
+        floating_window = false,
+        bind = true,
+        handler_opts = {
+          border = "rounded"
+        }
+      },
     },
   },
 }

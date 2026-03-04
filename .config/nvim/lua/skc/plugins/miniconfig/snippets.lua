@@ -1,7 +1,5 @@
 local gen_loader = require("mini.snippets").gen_loader
-
 local snippets = nil
-
 require("mini.snippets").setup({
   snippets = {
     -- Load custom file with global snippets first (adjust for Windows)
@@ -15,7 +13,7 @@ require("mini.snippets").setup({
     expand = "",
     jump_next = "<C-n>",
     jump_prev = "<C-p>",
-    stop = "<Esc>",
+    stop = "<C-c>",
   }
 })
 

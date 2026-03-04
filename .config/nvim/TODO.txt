@@ -1,0 +1,12 @@
+ILif
+
+TODO:
+finish float
+maybe make nvim your terminal emulator LMAOOOO
+change tab windows to be prettier
+
+make the function jumper of your dreams
+vim.lsp.buf.document_symbol
+vim.lsp.ListOpts
+
+switch from ahk to xdotool

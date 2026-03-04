@@ -17,12 +17,26 @@ vim.diagnostic.config({
     spacing = 2,
     format = function(diagnostic)
       local diagnostic_message = {
-        [vim.diagnostic.severity.ERROR] = diagnostic.message,
-        [vim.diagnostic.severity.WARN] = diagnostic.message,
-        -- [vim.diagnostic.severity.INFO] = diagnostic.message,
-        -- [vim.diagnostic.severity.HINT] = diagnostic.message,
+        [vim.diagnostic.severity.ERROR] = string.format("(%s) %s", diagnostic.code, diagnostic.message),
+        [vim.diagnostic.severity.WARN] = string.format("(%s) %s", diagnostic.code, diagnostic.message),
+        [vim.diagnostic.severity.INFO] = string.format("(%s) %s", diagnostic.code, diagnostic.message),
+        [vim.diagnostic.severity.HINT] = string.format("(%s) %s", diagnostic.code, diagnostic.message),
       }
       return diagnostic_message[diagnostic.severity]
     end,
   },
+
+  -- this sucks ass, don't re-enable it
+  -- virtual_lines = {
+  --   current_line = false,
+  --   severity = {
+  --     vim.diagnostic.severity.HINT,
+  --     vim.diagnostic.severity.INFO,
+  --     vim.diagnostic.severity.WARN,
+  --     vim.diagnostic.severity.ERROR,
+  --   },
+  --   format = function(diagnostic)
+  --     return string.format("%s (%s)", diagnostic.message, diagnostic.code)
+  --   end,
+  -- },
 })

@@ -40,7 +40,23 @@
     },
     "then": {
         "prefix": "then",
-        "body": ["then", "\t$0", "end"]
+        "body": ["then$0", "end"]
+    },
+    "do": {
+        "prefix": "do",
+        "body": ["do", "\t$0", "end"]
+    },
+    "its nil dammit": {
+        "prefix": "null",
+        "body": ["nil $0"]
+    },
+    "its local dammit": {
+        "prefix": "let",
+        "body": ["local $0"]
+    },
+    "else": {
+        "prefix": "else",
+        "body": ["else$0", "end"]
     },
     "elseif": {
         "prefix": "elseif",
@@ -130,8 +146,8 @@
         "body": ["local ${1:status}, ${2:err_or_value} = pcall(${3:function})"],
         "description": "Protect call a function as a variable"
     },
-    "comment": {
-        "prefix": "---",
+    "full-doc": {
+        "prefix": "doc",
         "body": [
             "--- ${1:A one-line summary.}",
             "-- ${2:Description.}$0",
@@ -140,14 +156,6 @@
             "-- @usage ${8:Example about how to use it.}"
         ],
         "description": "A lua comment with short summary, description, parameters, return, and example."
-    },
-    "comment_simple": {
-        "prefix": "--",
-        "body": [
-            "--- ${1:A one-line summary.}",
-            "-- ${2:Description.}$0"
-        ],
-        "description": "A simple lua comment with short summary and description. Useful when you prefer to add the tags manually on functions."
     },
     "@author": {
         "prefix": "@author",
@@ -198,12 +206,9 @@
         ],
         "description": "Refers to other descriptions of functions or tables."
     },
-    "@class": {
-        "prefix": "@class",
-        "body": [
-            "@class ${1:name}$0"
-        ],
-        "description": "If LuaDoc cannot infer the type of documentation (function, table or module definition), the programmer can specify it explicitly."
+    "@type": {
+        "prefix": "@type",
+        "body": "---@type ${0:string}"
     },
     "@description": {
         "prefix": "@description",
@@ -218,5 +223,17 @@
             "@name ${1:text}$0"
         ],
         "description": "The name of the function or table definition. This is usually infered from the code analysis, and the programmer does not need to define it. If LuaDoc can infer the name of the function automatically it's even not recomended to define the name explicitly, to avoid redundancy."
+    },
+    "diagnostic disable line": {
+        "prefix": "ddl",
+        "body": [
+            "---@diagnostic disable-next-line: ${0:unnecessary-if}"
+        ]
+    },
+    "diagnostic disable": {
+        "prefix": "ddis",
+        "body": [
+            "---@diagnostic disable-next-line: ${0:undefined-global}"
+        ]
     }
 }

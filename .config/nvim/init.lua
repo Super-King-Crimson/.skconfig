@@ -1,5 +1,4 @@
 vim.g.mapleader = " "
-
 vim.g.maplocalleader = "s"
 vim.keymap.set("", "s", "<Nop>", { silent = true, noremap = true })
 
@@ -47,3 +46,8 @@ require("lazy").setup({
 })
 
 vim.cmd.colorscheme("moonfly")
+--
+-- vim.opt.rtp:append("~/src")
+--
+-- -- lsp testing of DOOOOOOM
+-- require("hi").bye("hi", 5);

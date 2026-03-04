@@ -1,5 +1,4 @@
 -- Options --
-vim.o.foldcolumn = "1"
 vim.o.foldlevel = 99
 vim.o.foldlevelstart = 99
 vim.o.foldenable = true
@@ -32,7 +31,7 @@ vim.o.mouse = "a"
 vim.o.showmode = false
 
 vim.schedule(function()
-    vim.o.clipboard = "unnamedplus"
+  vim.o.clipboard = "unnamedplus"
 end)
 
 vim.o.breakindent = true

@@ -4,6 +4,10 @@ vim.keymap.set("n", "<Leader>|", "<cmd>tcd %:h<CR>", { desc = "Set tab directory
 
 vim.keymap.set("n", "<Leader>F", "<cmd>wincmd o<CR>", { desc = "[F]ocus!" })
 
+vim.keymap.set("", "<Leader>x", '"_x', { desc = "Delete into black hole register" })
+vim.keymap.set("", "<Leader>d", '"_d', { desc = "Delete into black hole register" })
+
+require("skc.keymaps.diagnostics")
 require("skc.keymaps.fold")
 require("skc.keymaps.insert_ext")
 require("skc.keymaps.macro")
