@@ -1,23 +1,10 @@
 {
-  "runtime": {
-    "version": "LuaJIT",
-    "extensions": [
-      ".lua"
-    ],
-    "requirePattern": [
-      "lua/?.lua",
-      "lua/?/init.lua"
-    ]
+  "completion": {
+    "callSnippet": false,
+    "enable": true
   },
-  "$schema": "https://raw.githubusercontent.com/EmmyLuaLs/emmylua-analyzer-rust/refs/heads/main/crates/emmylua_code_analysis/resources/schema.json",
   "diagnostics": {
-    "severity": {
-      "access-invisible": "error",
-      "return-type-mismatch": "error",
-      "unused": "warning"
-    },
     "disable": [
-      "invert-if",
       "deprecated",
       "discard-returns",
       "inject-field",
@@ -27,7 +14,12 @@
       "param-type-not-match",
       "redefined-local",
       "unreachable-code"
-    ]
+    ],
+    "severity": {
+      "return-type-mismatch": "error",
+      "unused": "warning",
+      "access-invisible": "error"
+    }
   },
   "workspace": {
     "library": [
@@ -62,8 +54,15 @@
       "/home/skc/.local/share/nvim/lazy/which-key.nvim"
     ]
   },
-  "completion": {
-    "enable": true,
-    "callSnippet": false
-  }
+  "runtime": {
+    "extensions": [
+      ".lua"
+    ],
+    "requirePattern": [
+      "lua/?.lua",
+      "lua/?/init.lua"
+    ],
+    "version": "LuaJIT"
+  },
+  "$schema": "https://raw.githubusercontent.com/EmmyLuaLs/emmylua-analyzer-rust/refs/heads/main/crates/emmylua_code_analysis/resources/schema.json"
 }
