@@ -125,6 +125,7 @@ fi
 export EDITOR="nvim"
 export TERMINAL="konsole"
 export VISUAL="$EDITOR"
+export MANPAGER=batcat
 
 
 ### Shortcuts
@@ -172,6 +173,21 @@ alias ptouch="install /dev/null -m"
 
 # useful flags: o (nly match), n (line numbers), E (use extended regex), v (invert match)
 alias grep='grep --color=auto -E'
+
+cd() {
+    builtin cd "$@" && ls
+}
+
+cdback() {
+    local count=${1:-1}
+    local path=""
+
+    for ((i=0; i<count; i++)); do
+        path="../$path"
+    done
+    cd "$path"
+}
+alias '..'=cdback
 
 # -R (allow color display, required to work with bat)
 bat() {
@@ -225,7 +241,7 @@ xcd() {
 }
 
 xcr() {
-    realpath "$@" | xd && xc
+    which "$@" | x realpath | xd && xc
 }
 
 # Encrypt a folder into a symmetrical GPG archive
