@@ -2,12 +2,12 @@
  "patterns": [
   {
    "pattern": "https://keep.google.com.*",
-   "isRegex": false,
+   "isRegex": true,
    "enabled": true
   },
   {
    "pattern": "https://tasks.google.com/tasks.*",
-   "isRegex": false,
+   "isRegex": true,
    "enabled": true
   },
   {
