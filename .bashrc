@@ -27,16 +27,16 @@ shopt -s checkwinsize
 # Adjusted for EndeavourOS/Arch: Checks for a custom variable
 # since /etc/debian_chroot won't exist.
 if [ -z "${debian_chroot:-}" ]; then
-    if [ -r /etc/debian_chroot ]; then
-        debian_chroot=$(cat /etc/debian_chroot)
-    elif [ -n "${CHROOT_NAME:-}" ]; then
-        debian_chroot="$CHROOT_NAME"
-    fi
+	if [ -r /etc/debian_chroot ]; then
+		debian_chroot=$(cat /etc/debian_chroot)
+	elif [ -n "${CHROOT_NAME:-}" ]; then
+		debian_chroot="$CHROOT_NAME"
+	fi
 fi
 
 # set a fancy prompt (non-color, unless we know we "want" color)
 case "$TERM" in
-    xterm-color|*-256color) color_prompt=yes;;
+	xterm-color|*-256color) color_prompt=yes;;
 esac
 
 # uncomment for a colored prompt, if the terminal has the capability; turned
@@ -46,43 +46,43 @@ esac
 force_color_prompt=yes
 
 if [ -n "$force_color_prompt" ]; then
-    if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
-        # We have color support; assume it's compliant with Ecma-48
-        # (ISO/IEC-6429). (Lack of such support is extremely rare, and such
-        # a case would tend to support setf rather than setaf.)
-        color_prompt=yes
-    else
-        color_prompt=
-    fi
+	if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
+		# We have color support; assume it's compliant with Ecma-48
+		# (ISO/IEC-6429). (Lack of such support is extremely rare, and such
+		# a case would tend to support setf rather than setaf.)
+		color_prompt=yes
+	else
+		color_prompt=
+	fi
 fi
 
 
 if [ "$color_prompt" = yes ]; then
-    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u \[\033[00m\]\[\033[01;34m\]\w \[\033[00m\]\$ '
+	PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u \[\033[00m\]\[\033[01;34m\]\w \[\033[00m\]\$ '
 else
-    PS1='${debian_chroot:+($debian_chroot)}\u \w \$ '
+	PS1='${debian_chroot:+($debian_chroot)}\u \w \$ '
 fi
 unset color_prompt force_color_prompt
 
 # If this is an xterm set the title to user@host:dir
 case "$TERM" in
-    xterm*|rxvt*)
-        PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
-        ;;
-    *)
-        ;;
+	xterm*|rxvt*)
+		PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
+		;;
+	*)
+		;;
 esac
 
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
-    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-    alias ls='ls --color=auto'
-    #alias dir='dir --color=auto'
-    #alias vdir='vdir --color=auto'
+	test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+	alias ls='ls --color=auto'
+	#alias dir='dir --color=auto'
+	#alias vdir='vdir --color=auto'
 
-    alias grep='grep --color=auto'
-    alias fgrep='fgrep --color=auto'
-    alias egrep='egrep --color=auto'
+	alias grep='grep --color=auto'
+	alias fgrep='fgrep --color=auto'
+	alias egrep='egrep --color=auto'
 fi
 
 
@@ -99,18 +99,18 @@ alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo
 # See /usr/share/doc/bash-doc/examples in the bash-doc package.
 
 if [ -f ~/.bash_aliases ]; then
-    . ~/.bash_aliases
+	. ~/.bash_aliases
 fi
 
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
 # sources /etc/bash.bashrc).
 if ! shopt -oq posix; then
-    if [ -f /usr/share/bash-completion/bash_completion ]; then
-        . /usr/share/bash-completion/bash_completion
-    elif [ -f /etc/bash_completion ]; then
-        . /etc/bash_completion
-    fi
+	if [ -f /usr/share/bash-completion/bash_completion ]; then
+		. /usr/share/bash-completion/bash_completion
+	elif [ -f /etc/bash_completion ]; then
+		. /etc/bash_completion
+	fi
 fi
 
 
@@ -135,13 +135,13 @@ PROMPT_COMMAND="update_manwidth; $PROMPT_COMMAND"
 
 
 ### Shortcuts
-export dt=$HOME/Desktop
-export dl=$HOME/Downloads
-export dc=$HOME/Documents
-export pc=$HOME/Pictures
-export vd=$HOME/Videos
-export as=$HOME/Assets
-export bn=$HOME/Binaries
+export dt="$HOME/Desktop"
+export dl="$HOME/Downloads"
+export dc="$HOME/Documents"
+export pc="$HOME/Pictures"
+export vd="$HOME/Videos"
+export as="$HOME/Assets"
+export bn="$HOME/Binaries"
 export so="$HOME/src"
 export im="$HOME/IMPORTANT/"
 export nts="$HOME/Desktop/notes"
@@ -159,10 +159,9 @@ shopt -s direxpand
 ### Simple aliases
 alias ll='ls -alFh'
 alias la='ls -A'
+alias cp='cp -r'
 alias d='cd'
 alias v='nvim'
-alias trash='trash-put'
-alias restore='trash-restore'
 
 # other useful flags:
 #   tree: I ignore-pat, L depth, i (no indent lines), f(ull relative path) 
@@ -173,43 +172,49 @@ alias restore='trash-restore'
 # ps -e is equal to ps aux btw (list all processes: you probably want to run this thru grep -E)
 alias pse="ps -e -o pid,command"
 
-# don't ask me why this works... creates a file with specified octal permission code
-alias ptouch="install /dev/null -m"
-
 # useful flags: o (nly match), n (line numbers), E (use extended regex), v (invert match)
 alias grep='grep --color=auto -E'
 
+cutlines() {
+	# Check if any argument starts with "-f"
+	if [[ $# -eq 0 ]]; then
+		cut -d$'\n' -f1-
+	else
+		cut -d$'\n' "$@"
+	fi
+}
+
 cd() {
-    builtin cd "$@" && ls
+	builtin cd "$@" && ls
 }
 
 cdback() {
-    local count=${1:-1}
-    local path=""
+	local count=${1:-1}
+	local path=""
 
-    for ((i=0; i<count; i++)); do
-        path="../$path"
-    done
-    cd "$path"
+	for ((i=0; i<count; i++)); do
+		path="../$path"
+	done
+	cd "$path"
 }
 alias '..'=cdback
 
 # -R (allow color display, required to work with bat)
 bat() {
-    batcat --color=always "$@" | less -R
+	batcat --color=always "$@" | less -R
 }
 
 # double reverses a string so you can cut from the end
 # bro == echo ok bro | rcut -c-3
 rcut() {
-    rev | cut "$@" | rev
+	rev | cut "$@" | rev
 }
 
 # Copies output of last command to clipboard
 # Change this on wayland lol
 clip() {
-    tr -d '\n' | xclip -selection clipboard
-    echo Copied to clipboard.
+	tr -d '\n' | xclip -selection clipboard
+	echo Copied to clipboard.
 }
 alias copy="clip"
 
@@ -219,16 +224,16 @@ alias copy="clip"
 ### Scripts
 __bridge="/tmp/.uid${UID}_${USER}.x"
 x() {
-    local output
-    output=$(xargs "$@")
+	local output
+	output=$(xargs "$@")
 
 	# tee didn't work for some reason so ig we're doing this
-    echo "$output" > "$__bridge"
-    echo "$output"
+	echo "$output" > "$__bridge"
+	echo "$output"
 }
 
 xp() {
-    x realpath
+	x realpath
 }
 
 # Everyime x is called, it writes its output to $__bridge
@@ -236,80 +241,80 @@ xp() {
 # you can't simply pipe to it like .. | x cd (for linux reasons)
 # So made this function xc(d) that reads that output and attempts to cd to it
 xc() {
-    if [ ! -s "$__bridge" ]; then
-        echo Failed to read from bridge.
-        return 1
-    fi
+	if [ ! -s "$__bridge" ]; then
+		echo Failed to read from bridge.
+		return 1
+	fi
 
-    local target
-    target=$(head "$__bridge")
-    builtin cd "$target" && ls
+	local target
+	target=$(head "$__bridge")
+	builtin cd "$target" && ls
 }
 
 # Encrypt a folder into a symmetrical GPG archive
 encrypt_archive_symmetrical_gpg() {
-    local GPG_OPTS=""
-    local OPTIND=1  # Reset getopts index for function calls
+	local GPG_OPTS=""
+	local OPTIND=1  # Reset getopts index for function calls
 
-    # Parse flags
-    while getopts "f" opt; do
-        case "$opt" in
-            f) GPG_OPTS="--no-symkey-cache" ;;
-            *) echo "Usage: enc-sym [-f] <folder_path>"; return 1 ;;
-        esac
-    done
+	# Parse flags
+	while getopts "f" opt; do
+		case "$opt" in
+			f) GPG_OPTS="--no-symkey-cache" ;;
+			*) echo "Usage: enc-sym [-f] <folder_path>"; return 1 ;;
+		esac
+	done
 
-    shift $((OPTIND-1)) # Remove the flags from the argument list
+	shift $((OPTIND-1)) # Remove the flags from the argument list
 
-    local folder_path="$1"
-    local output_name=$(basename "$folder_path")
-    if [[ -z "$folder_path" ]]; then
-        echo "Usage: enc-sym [-f] <folder_path>"
-        return 1
-    fi
+	local folder_path="$1"
+	local output_name=$(basename "$folder_path")
+	if [[ -z "$folder_path" ]]; then
+		echo "Usage: enc-sym [-f] <folder_path>"
+		return 1
+	fi
 
-    # -c uses symmetric encryption
-    # --pbkdf2 specifies the password-based key derivation function
-    tar -cf - "$folder_path" | gpg $GPG_OPTS -c -o "$output_name.tar.gpg"
+	# -c uses symmetric encryption
+	# --pbkdf2 specifies the password-based key derivation function
+	tar -cf - "$folder_path" | gpg $GPG_OPTS -c -o "$output_name.tar.gpg"
 
-    local status_tar=${PIPESTATUS[0]}
-    local status_gpg=${PIPESTATUS[1]}
-    if [[ $status_tar -eq 0 && $status_gpg -eq 0 ]]; then
-        echo "Archive encrypted successfully as $output_name.tar.gpg."
-        echo "Please delete the original directory."
-    fi
+	local status_tar=${PIPESTATUS[0]}
+	local status_gpg=${PIPESTATUS[1]}
+	if [[ $status_tar -eq 0 && $status_gpg -eq 0 ]]; then
+		echo "Archive encrypted successfully as $output_name.tar.gpg."
+		echo "Please delete the original directory."
+	fi
 }
 alias enc='encrypt_archive_symmetrical_gpg'
 
 # Decrypt and extract a symmetrical GPG archive
 decrypt_extract_symmetrical_gpg() {
-    local GPG_OPTS=""
-    local OPTIND=1
+	local GPG_OPTS=""
+	local OPTIND=1
 
-    # Parse flags
-    while getopts "f" opt; do
-        case "$opt" in
-            f) GPG_OPTS="--no-symkey-cache" ;;
-            *) echo "Usage: dec-sym [-f] <encrypted_data_path>"; return 1 ;;
-        esac
-    done
-    shift $((OPTIND-1))
+	# Parse flags
+	while getopts "f" opt; do
+		case "$opt" in
+			f) GPG_OPTS="--no-symkey-cache" ;;
+			*) echo "Usage: dec-sym [-f] <encrypted_data_path>"; return 1 ;;
+		esac
+	done
+	shift $((OPTIND-1))
 
-    local encrypted_data_path="$1"
-    if [[ -z "encrypted_data_path" ]]; then
-        echo "Usage: dec-sym [-f] <encrypted_data_path>"
-        return 1
-    fi
+	local encrypted_data_path="$1"
+	if [[ -z "encrypted_data_path" ]]; then
+		echo "Usage: dec-sym [-f] <encrypted_data_path>"
+		return 1
+	fi
 
-    # -d decrypts the file and pipes the stdout directly to tar
-    gpg $GPG_OPTS -d "$encrypted_data_path" | tar -xf -
+	# -d decrypts the file and pipes the stdout directly to tar
+	gpg $GPG_OPTS -d "$encrypted_data_path" | tar -xf -
 
-    local status_gpg=${PIPESTATUS[0]}
-    local status_tar=${PIPESTATUS[1]}
-    if [[ $status_gpg -eq 0 && $status_tar -eq 0 ]]; then
-        echo "Archive decrypted and extracted to current directory."
-        echo "Remember to re-encrypt this file after you are done."
-    fi
+	local status_gpg=${PIPESTATUS[0]}
+	local status_tar=${PIPESTATUS[1]}
+	if [[ $status_gpg -eq 0 && $status_tar -eq 0 ]]; then
+		echo "Archive decrypted and extracted to current directory."
+		echo "Remember to re-encrypt this file after you are done."
+	fi
 }
 alias dec='decrypt_extract_symmetrical_gpg'
 
@@ -321,4 +326,8 @@ export PATH="$HOME/.local/bin:$PATH"
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-. "$HOME/.cargo/env"
+
+# --- SAFEME ALIASES ---
+alias rm='/usr/local/sbin/safe-rm'
+alias sudo='sudo '
+# ----------------------
