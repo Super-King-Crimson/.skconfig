@@ -2,5 +2,6 @@
 vim.keymap.set("n", "<A-o>", 'o<Esc>"_cc<Esc>')
 vim.keymap.set("n", "<A-O>", 'O<Esc>"_cc<Esc>')
 
--- Clears search highlighting and cancels all macros
-vim.keymap.set("n", "<Esc>", "<cmd>noh<CR>q<Esc>")
+-- Clicking esc also turns off any macros and clears search highlights
+vim.keymap.set("n", "<Esc>", "<Esc>q<Esc><cmd>noh<CR>")
+

@@ -19,13 +19,13 @@ vim.o.incsearch = true
 vim.o.number = true
 vim.o.relativenumber = true
 
--- DON'T CHANGE THESE! when softtabstop is negative, shiftwidth is used!
-vim.o.tabstop = 8
+-- when softtabstop is negative, shiftwidth is used
+-- when shiftwidth is 0, tabstop is used
+-- therefore we can easily exit our config with just tabstop and expandtab
+vim.o.tabstop = 4
+vim.o.shiftwidth = 0
 vim.o.softtabstop = -1
-
--- you can change these :)
-vim.o.shiftwidth = 4
-vim.o.expandtab = true
+vim.o.expandtab = false
 
 vim.o.mouse = "a"
 vim.o.showmode = false
@@ -38,7 +38,7 @@ vim.o.breakindent = true
 vim.o.undofile = true
 
 -- Keep signcolumn on by default
-vim.o.signcolumn = "yes"
+vim.o.signcolumn = "yes:1"
 
 -- Configure how new splits should be opened
 vim.o.splitright = true
@@ -49,8 +49,6 @@ vim.opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
 vim.o.inccommand = "split"
 vim.o.cursorline = true
 
--- MAXIMUM POWER!!!!!
--- nvm minimum power
 vim.o.scrolloff = 999
 vim.o.confirm = true
 

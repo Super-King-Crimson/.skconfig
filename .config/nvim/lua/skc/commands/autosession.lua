@@ -1,5 +1,7 @@
-local SESSION_DIR = "/home/skc/Documents/nvimsessions/"
-local defaultSessionName = "latest"
+-- don't forget this trailing slash
+local SESSION_DIR = vim.fn.stdpath("data") .. "/autosessions/"
+
+local defaultSessionName = "_latest"
 local pointedTo = nil
 local currSession = nil
 
@@ -14,22 +16,10 @@ local function getFullPathFromSessionName(name)
 end
 
 local function getSessionNameFromFullPath(path)
-  local relPath = vim.fn.slice(path, vim.fn.strcharlen(SESSION_DIR))
+  -- literally just the relative path
+  local relPath = string.sub(path, string.len(SESSION_DIR) + 1)
+  -- with the file extension removed
   return vim.fn.fnamemodify(relPath, ":r")
-end
-
-local function getSymLinkTarget(link)
-  local out = vim.fn.execute("!readlink " .. link)
-
-  -- I'm not taking questions on how this works
-  -- TODO: make this shit less shitty
-  local linkedFile = vim.fn.split(out, "\n")[3]
-
-  -- Output: "\n:!readlink /home/skc/Documents/testnvimsessions/latest.vim\r\n\n/home/skc/Documents/testnvimsessions/nvimconfig.vim\n"
-  -- Extracted path to link: not found :(
-  if linkedFile and vim.uv.fs_stat(linkedFile) then
-    return getSessionNameFromFullPath(linkedFile)
-  end
 end
 
 local function writeAutosession(name)
@@ -49,7 +39,6 @@ local function writeAutosession(name)
   end
 
   vim.cmd("silent mksession! " .. sessionPath)
-
   logDebug("Wrote session" .. sessionPath, vim.log.levels.INFO)
 
   return sessionPath
@@ -66,7 +55,6 @@ local function changeWriteAutoSession(name)
   end
 
   currSession = name
-
   writeAutosession(currSession)
 end
 
@@ -96,7 +84,7 @@ local function loadAutosession(sessionName)
 
   currSession = sessionName
 
-  logMsg("Successfully sourced " .. sessionName, vim.log.levels.INFO)
+  logMsg(string.format("Successfully sourced %s.", sessionName), vim.log.levels.INFO)
 end
 
 local function loadAutosessionFromFuzzyFind()
@@ -140,6 +128,10 @@ local function loadAutosessionFn(args)
   loadAutosession(name)
 end
 
+
+
+
+
 vim.api.nvim_create_user_command("LoadAutosession", loadAutosessionFn, {
   desc = "Load a session that will be written to upon filewrite",
   nargs = "?",
@@ -148,19 +140,23 @@ vim.api.nvim_create_user_command("LoadAutosession", loadAutosessionFn, {
 })
 vim.keymap.set("n", "<Leader>ol", loadAutosessionFn, { desc = "[O]pen [L]atest session" })
 
+
+
+
+
+
 local function whichAutosessionFn()
   -- is default session a symlink to a different session
-  if currSession == defaultSessionName then
-    local fullPath = getFullPathFromSessionName(defaultSessionName)
-    local potentialTarget = getSymLinkTarget(fullPath)
+  local isPointer = false
 
-    if potentialTarget then
-      print("Session: " .. defaultSessionName .. " > " .. potentialTarget)
-      return
-    end
+  if currSession == defaultSessionName then
+    local path = getFullPathFromSessionName(defaultSessionName)
+
+    isPointer = vim.uv.fs_readlink(path) ~= nil
   end
 
-  print("Session: " .. (currSession or "none"))
+  -- don't worry too much about this it formats output
+  print(string.format("Session: %s%s", isPointer and defaultSessionName .. " > " or "", currSession))
 end
 vim.api.nvim_create_user_command("WhichAutosession", whichAutosessionFn, {
   force = true,
@@ -168,23 +164,31 @@ vim.api.nvim_create_user_command("WhichAutosession", whichAutosessionFn, {
 })
 vim.keymap.set("n", "<Leader>?s", whichAutosessionFn, { desc = "Which [S]ession?" })
 
+
+
+
+
+
 local function changeWriteAutoSessionFromInput()
   vim.ui.input({ prompt = "Session name: " }, function(input)
+    if input == nil or input == "" then return end
+
     changeWriteAutoSession(input)
   end)
 end
-
 vim.keymap.set("n", "<Leader>ws", changeWriteAutoSessionFromInput, { desc = "[W]rite [S]ession" })
+
+
 
 local function editAutosessions()
   vim.cmd("edit " .. SESSION_DIR)
 end
-
 vim.api.nvim_create_user_command("EditAutosessions", editAutosessions, {
   desc = "Go to directory of autosessions for easy deletion, renaming, etc.",
 })
 
-vim.keymap.set("n", "<Leader>na", "<cmd>EditAutosessions<CR>", { desc = "[N]eovim [A]utosessions" })
+
+
 
 local augroup = vim.api.nvim_create_augroup("skc-auto-write-session", { clear = true })
 vim.api.nvim_create_autocmd({ "BufWritePost" }, {
@@ -197,6 +201,7 @@ vim.api.nvim_create_autocmd({ "BufWritePost" }, {
 vim.api.nvim_create_autocmd({ "VimLeave" }, {
   group = augroup,
   callback = function()
+    -- automatically makes symlink to last accessed session
     if currSession and currSession ~= defaultSessionName then
       vim.cmd("silent! !rm " .. getFullPathFromSessionName(defaultSessionName))
 

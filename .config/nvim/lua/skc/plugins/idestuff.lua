@@ -14,7 +14,6 @@ local ENSURE_INSTALLED = {
   servers = {
     "emmylua_ls",
     "luau-lsp",
-    -- "lua-language-server",
     "rust-analyzer",
     "css-variables-language-server",
     "cssmodules-language-server",
@@ -103,9 +102,9 @@ return {
           enabled = false
         },
         sorts = {
+          "exact",
           "score",
           "sort_text",
-          "exact",
         },
         implementation = "prefer_rust_with_warning"
       },
@@ -113,7 +112,15 @@ return {
       completion = { documentation = { auto_show = false } },
 
       sources = {
-        default = { "lsp", "path", "snippets", "buffer" },
+        default = { "lsp", "snippets", "buffer", "path" },
+        providers = {
+          snippets = {
+            score_offset = 5,
+          },
+          lsp = {
+            score_offset = 0,
+          }
+        }
       },
     },
   },

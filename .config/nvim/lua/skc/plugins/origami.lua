@@ -22,20 +22,15 @@ return {
           disableOnFt = { "snacks_picker_input" },
         },
         autoFold = {
-          enabled = true,
+          enabled = false,
           kinds = { "imports" },
         },
         foldKeymaps = {
           setup = false,
-          closeOnlyOnFirstColumn = false,
+          closeOnlyOnFirstColumn = true,
           scrollLeftOnCaret = false,
         },
       })
-
-      vim.keymap.set("n", "h", function() require("origami").h() end)
-      vim.keymap.set("n", "l", function() require("origami").l() end)
-      vim.keymap.set("n", "gh", function() require("origami").caret() end)
-      vim.keymap.set("n", "gl", function() require("origami").dollar() end)
     end
   },
 }

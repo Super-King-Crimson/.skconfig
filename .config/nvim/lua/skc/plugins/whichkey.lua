@@ -61,8 +61,6 @@ return {
       { "<LocalLeader>p", group = "Split tab" },
       { "<LocalLeader>o", group = "Only tab" },
       { "<LocalLeader>x", group = "Close tab" },
-      { "<LocalLeader><LocalLeader>", group = "Explore in new tab" },
-      { "<LocalLeader><Leader>", group = "Close Extras" },
       { "<LocalLeader>c", group = "Close Extras" },
 
       { "<leader>s", group = "[S]earch" },

@@ -1,12 +1,16 @@
-ILif
-
 TODO:
+tree commands: ILif
 finish float
-maybe make nvim your terminal emulator LMAOOOO
 change tab windows to be prettier
 
 make the function jumper of your dreams
 vim.lsp.buf.document_symbol
 vim.lsp.ListOpts
 
-switch from ahk to xdotool
+make keybinds for window <A-hjkl>
+
+figure out how to hack input remapper to free up shiftlock
+
+create easy, exportable version of config (howdoiexit.nvim)
+
+BRO THERE'S A WSL OPTION FOR NVIM IM CRINGGGG

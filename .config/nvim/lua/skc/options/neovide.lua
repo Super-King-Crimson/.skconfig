@@ -1,5 +1,6 @@
 if vim.g.neovide then
   local scale = 0.5
+  vim.g.neovide_fullscreen = true
 
   vim.o.guifont = "FiraCode Nerd Font Mono Ret:h18:w-0.4"
   vim.g.neovide_scale_factor = scale

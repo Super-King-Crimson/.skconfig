@@ -3,6 +3,24 @@ local LabTools = {}
 local silent = false
 local debugMode = false
 
+-- obeys wildignore and returns list
+function LabTools.getChildrenAbs(path, wildignore)
+  if not wildignore then wildignore = false end
+
+  -- convert to absolute path by prefixing a / if not already done
+  if string.sub(path, 1, 1) ~= "/" then path = "/" .. path end
+
+  -- return nil if path wasn't real
+  if vim.fn.glob(path) == "" then return nil end
+
+  -- adds tailing slash if not already there
+  if string.sub(path, string.len(path) - 1, 1) ~= "/" then path = path .. "/" end
+
+  local children = vim.fn.glob(path .. "*", wildignore, true)
+
+  return children
+end
+
 function LabTools.logMsg(msg, logLevel)
   if silent then
     return
@@ -17,8 +35,33 @@ function LabTools.logDebug(debugMsg, logLevel)
   end
 end
 
-function LabTools.isEmpty(str)
-  return str == nil or str == ""
+function LabTools.isPathIgnored(path, ignoreOrIgnores)
+  local ignores = ignoreOrIgnores
+
+  if type(ignoreOrIgnores) == "string" then
+    ignores = { ignoreOrIgnores }
+  elseif type(ignoreOrIgnores) ~= "table" then
+    error("Expected string for paths to ignore, got " .. type(ignoreOrIgnores))
+  end
+
+  for _, ignore in ipairs(ignores) do
+    -- Escape special characters in the ignore string
+    local pattern = string.gsub(ignore, "[%^%$%(%)%%%.%[%]%*%+%-%?]", "%%%1")
+
+    -- Check if it matches as a full path component
+    if string.find("/" .. path .. "/", "/" .. pattern .. "/") ~= nil then return true end
+  end
+
+  return false
+end
+
+-- checks nil, "", and {}
+function LabTools.isEmpty(value)
+  if type(value) == "table" then
+    return next(value) == nil
+  end
+
+  return value == nil or value == ""
 end
 
 function LabTools.matches(str, ...)
@@ -67,7 +110,7 @@ vim.api.nvim_create_autocmd("User", {
 
 function LabTools.fuzzyFindPrompt(items, callback)
   if #items == 0 then
-    LabTools.logMsg("There is nothing to find", vim.log.levels.ERROR)
+    LabTools.logMsg("No elements found.", vim.log.levels.ERROR)
     return false
   end
 

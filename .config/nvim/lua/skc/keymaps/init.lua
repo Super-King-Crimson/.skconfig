@@ -1,11 +1,10 @@
--- Trust this is useful
 vim.keymap.set("n", "<Leader>.", "<cmd>cd %:h<CR>", { desc = "Set workspace directory to that of current buffer" })
 vim.keymap.set("n", "<Leader>|", "<cmd>tcd %:h<CR>", { desc = "Set tab directory to that of current buffer" })
 
 vim.keymap.set("n", "<Leader>F", "<cmd>wincmd o<CR>", { desc = "[F]ocus!" })
 
-vim.keymap.set("", "<Leader>x", '"_x', { desc = "Delete into black hole register" })
-vim.keymap.set("", "<Leader>d", '"_d', { desc = "Delete into black hole register" })
+vim.keymap.set("", "c", "\"_c", { desc = "Make c always delete into the black hole register" })
+vim.keymap.set("n", "cc", "^\"_c$", { desc = "Make c always delete into the black hole register" })
 
 require("skc.keymaps.diagnostics")
 require("skc.keymaps.fold")
