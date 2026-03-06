@@ -1,10 +1,5 @@
-# ~/.bashrc
-
+case $- in *i*) ;; *) return;; esac
 # If not running interactively, don't do anything
-case $- in
-    *i*) ;;
-    *) return;;
-esac
 
 # don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
@@ -125,7 +120,18 @@ fi
 export EDITOR="nvim"
 export TERMINAL="konsole"
 export VISUAL="$EDITOR"
-export MANPAGER=batcat
+
+# don't ask me how this works, ask gemini
+export MANPAGER="sh -c 'col -bx | batcat -l man -p'"
+export MANROFFOPT="-c"
+
+update_manwidth() {
+	export MANWIDTH=$(((COLUMNS * 80) / 100))
+}
+
+# Runs before every prompt is displayed
+PROMPT_COMMAND="update_manwidth; $PROMPT_COMMAND"
+
 
 
 ### Shortcuts
@@ -157,7 +163,6 @@ alias d='cd'
 alias v='nvim'
 alias trash='trash-put'
 alias restore='trash-restore'
-alias glow='glow -p'
 
 # other useful flags:
 #   tree: I ignore-pat, L depth, i (no indent lines), f(ull relative path) 
@@ -217,14 +222,19 @@ x() {
     local output
     output=$(xargs "$@")
 
+	# tee didn't work for some reason so ig we're doing this
     echo "$output" > "$__bridge"
     echo "$output"
 }
 
-xd() {
-    x dirname
+xp() {
+    x realpath
 }
 
+# Everyime x is called, it writes its output to $__bridge
+# If you want to cd to that directory,
+# you can't simply pipe to it like .. | x cd (for linux reasons)
+# So made this function xc(d) that reads that output and attempts to cd to it
 xc() {
     if [ ! -s "$__bridge" ]; then
         echo Failed to read from bridge.
@@ -234,14 +244,6 @@ xc() {
     local target
     target=$(head "$__bridge")
     builtin cd "$target" && ls
-}
-
-xcd() {
-    which "$@" | xd && xc
-}
-
-xcr() {
-    which "$@" | x realpath | xd && xc
 }
 
 # Encrypt a folder into a symmetrical GPG archive
