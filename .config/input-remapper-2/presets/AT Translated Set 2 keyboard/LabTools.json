@@ -3,19 +3,6 @@
         "input_combination": [
             {
                 "type": 1,
-                "code": 42,
-                "origin_hash": "384a35c02b3a82bc4756d292e2c41d23"
-            }
-        ],
-        "target_uinput": "keyboard",
-        "output_symbol": "set(S, 1).hold_keys(Shift_L).if_eq($S, 0, key_down(Shift_L), set(S, 0))",
-        "name": "Shift Toggle and Psuedo Caps-Lock (L)",
-        "mapping_type": "key_macro"
-    },
-    {
-        "input_combination": [
-            {
-                "type": 1,
                 "code": 29,
                 "origin_hash": "384a35c02b3a82bc4756d292e2c41d23"
             }
@@ -34,8 +21,8 @@
             }
         ],
         "target_uinput": "keyboard",
-        "output_symbol": "set(A, 1).hold_keys(Alt_L).set(A, 0)",
-        "name": "Alt Toggle",
+        "output_symbol": "if_eq($A, 1, key_up(Alt_R).key(backslash)).\nset(A, 1).set(AL, 1).hold_keys(Alt_L).set(AL, 0).set(A, $AR)",
+        "name": "Alt Toggle (L)",
         "mapping_type": "key_macro"
     },
     {
@@ -47,7 +34,7 @@
             }
         ],
         "target_uinput": "keyboard",
-        "output_symbol": "set(S, 1).hold_keys(Shift_R).set(S, 0)",
+        "output_symbol": "if_eq($S, 1, key_up(Shift_R).\nkey(backslash).key(parenleft).\nkey(backslash).key(parenright).\nkey(Left).key(Left)).\nset(S, 1).set(SR, 1).hold_keys(Shift_R).set(SR, 0).set(S, $SL)",
         "name": "Shift Toggle (R)",
         "mapping_type": "key_macro"
     },
@@ -60,7 +47,7 @@
             }
         ],
         "target_uinput": "keyboard",
-        "output_symbol": "if_eq($C, 0, hold_keys(period), key_up(Control_L).key(End).key_down(Control_L))",
+        "output_symbol": "if_eq($C, 0, hold_keys(period), key_up(Control_L).key(End))",
         "name": "End",
         "mapping_type": "key_macro"
     },
@@ -73,7 +60,7 @@
             }
         ],
         "target_uinput": "keyboard",
-        "output_symbol": "if_eq($C, 0, hold_keys(comma), key_up(Control_L).key(Home).key_down(Control_L))",
+        "output_symbol": "if_eq($C, 0, hold_keys(comma), key_up(Control_L).key(Home))",
         "name": "Home",
         "mapping_type": "key_macro"
     },
@@ -86,7 +73,7 @@
             }
         ],
         "target_uinput": "keyboard",
-        "output_symbol": "if_eq($S, 1,\t\t\t\t\n\t\t\t\tif_eq($C, 1,\n\t\t\t\t\t\t\t\tkey_up(Control_L).key_up(Shift_L).key_up(Shift_R).\n\t\t\t\t\t\t\t\tkey(Home).key_down(Shift_L).key(End).key(Delete).key_up(Shift_L).\n\t\t\t\t\t\t\t\tif_eq($C, 1, key_down(Control_L)),\n\t\t\t\t\t\t\t\thold_keys(BackSpace)\n\t\t\t\t),\n\t\t\t\thold_keys(BackSpace)\n)",
+        "output_symbol": "if_eq($S, 1,\t\t\t\t\nif_eq($C, 1,\nkey_up(Control_L).key(Home).key(End).key(Delete).\nkey_up(Shift_L).key_up(Shift_R),\nhold_keys(BackSpace)),\nhold_keys(BackSpace))",
         "name": "Delete Line",
         "mapping_type": "key_macro"
     },
@@ -94,12 +81,12 @@
         "input_combination": [
             {
                 "type": 1,
-                "code": 58,
+                "code": 35,
                 "origin_hash": "384a35c02b3a82bc4756d292e2c41d23"
             }
         ],
         "target_uinput": "keyboard",
-        "output_symbol": "key(Escape)",
+        "output_symbol": "if_eq($C, 1,\nif_capslock(key(Caps_Lock)).\nkey_up(Control_L).key(Escape),\nhold_keys(h))",
         "name": "Escape Rebind",
         "mapping_type": "key_macro"
     },
@@ -107,13 +94,54 @@
         "input_combination": [
             {
                 "type": 1,
-                "code": 16,
+                "code": 42,
                 "origin_hash": "384a35c02b3a82bc4756d292e2c41d23"
             }
         ],
         "target_uinput": "keyboard",
-        "output_symbol": "if_tap(\n\t\t\t\thold_keys(q),\n\t\t\t\tkey(backslash)\n)",
-        "name": "Backslash Rebind",
+        "output_symbol": "if_eq($S, 1, key_up(Shift_R).\nkey(backslash).key(parenleft).\nkey(backslash).key(parenright).\nkey(Left).key(Left)).\nset(S, 1).set(SL, 1).hold_keys(Shift_L).set(SL, 0).set(S, $SR)",
+        "name": "Shift Toggle (L)",
+        "mapping_type": "key_macro"
+    },
+    {
+        "input_combination": [
+            {
+                "type": 1,
+                "code": 100,
+                "origin_hash": "384a35c02b3a82bc4756d292e2c41d23"
+            }
+        ],
+        "target_uinput": "keyboard",
+        "output_symbol": "if_eq($A, 1, key_up(Alt_L).key(backslash)).\nset(A, 1).set(AR, 1).hold_keys(Alt_R).set(AR, 0).set(A, $AL)",
+        "name": "Alt Toggle (R)",
+        "mapping_type": "key_macro"
+    },
+    {
+        "input_combination": [
+            {
+                "type": 1,
+                "code": 29,
+                "origin_hash": "384a35c02b3a82bc4756d292e2c41d23"
+            },
+            {
+                "type": 1,
+                "code": 42,
+                "origin_hash": "384a35c02b3a82bc4756d292e2c41d23"
+            },
+            {
+                "type": 1,
+                "code": 56,
+                "origin_hash": "384a35c02b3a82bc4756d292e2c41d23"
+            },
+            {
+                "type": 1,
+                "code": 143,
+                "origin_hash": "384a35c02b3a82bc4756d292e2c41d23"
+            }
+        ],
+        "target_uinput": "keyboard",
+        "output_symbol": "THINK TWICE BEFORE DOING MODIFIER KEYDOWN IN A IN ANY MACRO!\nSome applications listen for that (think firefox!)\n\nONLY CTRL L WILL TOGGLE KEYBINDS!\nI use it a lot, and I really don't want to send .key_up(Ctrl_L).key_up(Ctrl_R)\neverytime I want to do anything\n\n\n<Alt-Alt> = \\\n\n<Shift-Shift> = generate fighting one eyed kirby and places you inside it\n\n<C-h> = <Esc> (disables caps lock if its on)\n<C-,> = <Home> (shift compatible to select a line)\n<C-.> = <End>  (^)\n\n<C-S-BS> = Delete whole line\n",
+        "name": "README",
         "mapping_type": "key_macro"
     }
 ]
