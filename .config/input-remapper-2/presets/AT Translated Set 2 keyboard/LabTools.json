@@ -86,7 +86,7 @@
             }
         ],
         "target_uinput": "keyboard",
-        "output_symbol": "if_eq($C, 1, if_capslock(key(Caps_Lock))\n.key_up(Control_L).key(Escape),\nhold_keys(h))",
+        "output_symbol": "if_eq($C, 1, if_capslock(key(Caps_Lock))\n.key_up(Control_L).key(Escape).\nif_eq($C, 1, key_down(Control_L)),\nhold_keys(h))",
         "name": "Escape Rebind",
         "mapping_type": "key_macro"
     },
