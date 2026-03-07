@@ -1,140 +1,4 @@
-case $- in *i*) ;; *) return;; esac
-# If not running interactively, don't do anything
-
-# don't put duplicate lines or lines starting with space in the history.
-# See bash(1) for more options
-HISTCONTROL=ignoreboth
-
-# append to the history file, don't overwrite it
-shopt -s histappend
-
-
-HISTSIZE=1000
-HISTFILESIZE=2000
-
-# If set, the pattern "**" used in a pathname expansion context will
-# match all files and zero or more directories and subdirectories.
-shopt -s globstar
-
-# check the window size after each command and, if necessary,
-# update the values of LINES and COLUMNS.
-shopt -s checkwinsize
-
-# make less more friendly for non-text input files, see lesspipe(1)
-[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
-
-# set variable identifying the chroot you work in (used in the prompt below)
-# Adjusted for EndeavourOS/Arch: Checks for a custom variable
-# since /etc/debian_chroot won't exist.
-if [ -z "${debian_chroot:-}" ]; then
-	if [ -r /etc/debian_chroot ]; then
-		debian_chroot=$(cat /etc/debian_chroot)
-	elif [ -n "${CHROOT_NAME:-}" ]; then
-		debian_chroot="$CHROOT_NAME"
-	fi
-fi
-
-# set a fancy prompt (non-color, unless we know we "want" color)
-case "$TERM" in
-	xterm-color|*-256color) color_prompt=yes;;
-esac
-
-# uncomment for a colored prompt, if the terminal has the capability; turned
-# off by default to not distract the user: the focus in a terminal window
-# should be on the output of commands, not on the prompt
-
-force_color_prompt=yes
-
-if [ -n "$force_color_prompt" ]; then
-	if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
-		# We have color support; assume it's compliant with Ecma-48
-		# (ISO/IEC-6429). (Lack of such support is extremely rare, and such
-		# a case would tend to support setf rather than setaf.)
-		color_prompt=yes
-	else
-		color_prompt=
-	fi
-fi
-
-
-if [ "$color_prompt" = yes ]; then
-	PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u \[\033[00m\]\[\033[01;34m\]\w \[\033[00m\]\$ '
-else
-	PS1='${debian_chroot:+($debian_chroot)}\u \w \$ '
-fi
-unset color_prompt force_color_prompt
-
-# If this is an xterm set the title to user@host:dir
-case "$TERM" in
-	xterm*|rxvt*)
-		PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
-		;;
-	*)
-		;;
-esac
-
-# enable color support of ls and also add handy aliases
-if [ -x /usr/bin/dircolors ]; then
-	test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-	alias ls='ls --color=auto'
-	#alias dir='dir --color=auto'
-	#alias vdir='vdir --color=auto'
-
-	alias grep='grep --color=auto'
-	alias fgrep='fgrep --color=auto'
-	alias egrep='egrep --color=auto'
-fi
-
-
-# colored GCC warnings and errors
-export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
-
-# Add an "alert" alias for long running commands.  Use like so:
-#   sleep 10; alert
-alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
-
-# Alias definitions.
-# You may want to put all your additions into a separate file like
-# ~/.bash_aliases, instead of adding them here directly.
-# See /usr/share/doc/bash-doc/examples in the bash-doc package.
-
-if [ -f ~/.bash_aliases ]; then
-	. ~/.bash_aliases
-fi
-
-# enable programmable completion features (you don't need to enable
-# this, if it's already enabled in /etc/bash.bashrc and /etc/profile
-# sources /etc/bash.bashrc).
-if ! shopt -oq posix; then
-	if [ -f /usr/share/bash-completion/bash_completion ]; then
-		. /usr/share/bash-completion/bash_completion
-	elif [ -f /etc/bash_completion ]; then
-		. /etc/bash_completion
-	fi
-fi
-
-
-
-
-### Set defaults
-export EDITOR="nvim"
-export TERMINAL="konsole"
-export VISUAL="$EDITOR"
-
-# don't ask me how this works, ask gemini
-export MANPAGER="sh -c 'col -bx | batcat -l man -p'"
-export MANROFFOPT="-c"
-
-update_manwidth() {
-	export MANWIDTH=$(((COLUMNS * 80) / 100))
-}
-
-# Runs before every prompt is displayed
-PROMPT_COMMAND="update_manwidth; $PROMPT_COMMAND"
-
-
-
-### Shortcuts
+### Directory shortcuts and settings
 export dt="$HOME/Desktop"
 export dl="$HOME/Downloads"
 export dc="$HOME/Documents"
@@ -144,45 +8,123 @@ export as="$HOME/Assets"
 export bn="$HOME/Binaries"
 export so="$HOME/src"
 export im="$HOME/IMPORTANT/"
-export nts="$HOME/Desktop/notes"
+export nts="$HOME/Documents/notes"
 export bin="$HOME/.local/bin"
-export prj="$HOME/Documents/Projects"
-export tch="$HOME/src/scratch"
+
+export EDITOR="$HOME/.local/bin/nvim"
+export SUDO_EDITOR="$EDITOR"
+export TERMINAL="kitty"
+
+export MANPAGER="nvim +Man!"
+
+# file where marks will be saved for Man files
+export man_shada=$HOME/.manshada
 
 
 
 
-# Shell configuration
+
+
+# If not running interactively, don't do anything else
+case $- in *i*) ;; *) return;; esac
+
+
+
+
+export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
+
+# I alt+f4 out of windows so much so i'm writing every command
+export PROMPT_COMMAND="history -a"
+
+# don't put duplicate lines or lines starting with space in the history.
+# See bash(1) for more options
+HISTCONTROL=ignoreboth
+HISTSIZE=1000
+HISTFILESIZE=2000
+
+# you can use ** in glob to recurse into directories
+shopt -s globstar
+# automatically updates window size
+shopt -s checkwinsize
+shopt -s histappend
 shopt -u cdable_vars
-shopt -s direxpand
 
-### Simple aliases
-alias ll='ls -alFh'
-alias la='ls -A'
+# set variable identifying the chroot you work in (used in the prompt below)
+if [ -z "${debian_chroot:-}" ]; then
+	if [ -r /etc/debian_chroot ]; then
+		debian_chroot=$(cat /etc/debian_chroot)
+	elif [ -n "${CHROOT_NAME:-}" ]; then
+		debian_chroot="$CHROOT_NAME"
+	fi
+fi
+
+# Handle terminals that don't support color
+# add your terminal here
+color_prompt='no'
+case "$TERM" in
+	*kitty*) color_prompt='yes';;
+	*konsole*) color_prompt='yes';;
+	*gnome*) color_prompt='yes';;
+	*color*) color_prompt='yes';;
+	linux) color_prompt='yes';;
+esac
+
+if [ "$color_prompt" = 'yes' ]; then
+	PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u \[\033[00m\]\[\033[01;34m\]\w \[\033[00m\]\$ '
+else
+	PS1='${debian_chroot:+($debian_chroot)}\u \w \$ '
+fi
+unset color_prompt
+
+# enable programmable completion features
+if [ -f /usr/share/bash-completion/bash_completion ]; then
+	source /usr/share/bash-completion/bash_completion
+elif [ -f /etc/bash_completion ]; then
+	source /etc/bash_completion
+fi
+
+
+
+
+
+
+
+### Keybinds
+# Ctrl + Backspace: Delete one word backward
+bind '"\C-h": backward-kill-word'
+
+# End + Delete: Delete whole line
+bind '"\e[1;2F": kill-line'
+
+
+
+
+
+
+
+### Aliases and functions
+alias ls='ls --color=auto -AF'
+alias l='command ls --color=auto'
+alias ll='command ls -alFh'
 alias cp='cp -r'
 alias d='cd'
-alias v='nvim'
+alias v='nvim '
+alias quit='exit'
 
-# other useful flags:
-#   tree: I ignore-pat, L depth, i (no indent lines), f(ull relative path) 
-
-
-### Less simple aliases
-# literally just a filter (-o allows mapping to output)
-# ps -e is equal to ps aux btw (list all processes: you probably want to run this thru grep -E)
+# ps -e == ps aux btw (use w/grep to find evil processes)
 alias pse="ps -e -o pid,command"
 
-# useful flags: o (nly match), n (line numbers), E (use extended regex), v (invert match)
-alias grep='grep --color=auto -E'
+# . matches any character
+# *: 0+, +; 1+ {a,b}: a-b
+# o (nly match)
+# n (include line numbers, follow with a | cut -d: -f1 to get them out)
+# v (invert match)
+# i(gnore case)
+# P (use perl's backslash regex - \w(ord), not \W(ord), \s(pace), \< beginning of word, \> end of word)
+#	character classes: [a-zA-Z] (or [a-z] with -i), you can match not with ^ at beginning ([^a-z])
+alias grep='grep --color=auto -i -P'
 
-cutlines() {
-	# Check if any argument starts with "-f"
-	if [[ $# -eq 0 ]]; then
-		cut -d$'\n' -f1-
-	else
-		cut -d$'\n' "$@"
-	fi
-}
+
 
 cd() {
 	builtin cd "$@" && ls
@@ -191,10 +133,7 @@ cd() {
 cdback() {
 	local count=${1:-1}
 	local path=""
-
-	for ((i=0; i<count; i++)); do
-		path="../$path"
-	done
+	for ((i=0; i<count; i++)); do path="../$path"; done
 	cd "$path"
 }
 alias '..'=cdback
@@ -204,130 +143,95 @@ bat() {
 	batcat --color=always "$@" | less -R
 }
 
-# double reverses a string so you can cut from the end
-# bro == echo ok bro | rcut -c-3
-rcut() {
-	rev | cut "$@" | rev
-}
-
-# Copies output of last command to clipboard
-# Change this on wayland lol
 clip() {
-	tr -d '\n' | xclip -selection clipboard
+	xclip -selection clipboard
 	echo Copied to clipboard.
 }
 alias copy="clip"
 
 
-
-
-### Scripts
-__bridge="/tmp/.uid${UID}_${USER}.x"
-x() {
-	local output
-	output=$(xargs "$@")
-
-	# tee didn't work for some reason so ig we're doing this
-	echo "$output" > "$__bridge"
-	echo "$output"
-}
-
-xp() {
-	x realpath
-}
-
-# Everyime x is called, it writes its output to $__bridge
-# If you want to cd to that directory,
-# you can't simply pipe to it like .. | x cd (for linux reasons)
-# So made this function xc(d) that reads that output and attempts to cd to it
-xc() {
-	if [ ! -s "$__bridge" ]; then
-		echo Failed to read from bridge.
-		return 1
-	fi
-
-	local target
-	target=$(head "$__bridge")
-	builtin cd "$target" && ls
-}
-
-# Encrypt a folder into a symmetrical GPG archive
-encrypt_archive_symmetrical_gpg() {
-	local GPG_OPTS=""
-	local OPTIND=1  # Reset getopts index for function calls
-
-	# Parse flags
-	while getopts "f" opt; do
-		case "$opt" in
-			f) GPG_OPTS="--no-symkey-cache" ;;
-			*) echo "Usage: enc-sym [-f] <folder_path>"; return 1 ;;
-		esac
-	done
-
-	shift $((OPTIND-1)) # Remove the flags from the argument list
-
-	local folder_path="$1"
-	local output_name=$(basename "$folder_path")
-	if [[ -z "$folder_path" ]]; then
-		echo "Usage: enc-sym [-f] <folder_path>"
-		return 1
-	fi
-
-	# -c uses symmetric encryption
-	# --pbkdf2 specifies the password-based key derivation function
-	tar -cf - "$folder_path" | gpg $GPG_OPTS -c -o "$output_name.tar.gpg"
-
-	local status_tar=${PIPESTATUS[0]}
-	local status_gpg=${PIPESTATUS[1]}
-	if [[ $status_tar -eq 0 && $status_gpg -eq 0 ]]; then
-		echo "Archive encrypted successfully as $output_name.tar.gpg."
-		echo "Please delete the original directory."
-	fi
-}
-alias enc='encrypt_archive_symmetrical_gpg'
-
-# Decrypt and extract a symmetrical GPG archive
-decrypt_extract_symmetrical_gpg() {
-	local GPG_OPTS=""
-	local OPTIND=1
-
-	# Parse flags
-	while getopts "f" opt; do
-		case "$opt" in
-			f) GPG_OPTS="--no-symkey-cache" ;;
-			*) echo "Usage: dec-sym [-f] <encrypted_data_path>"; return 1 ;;
-		esac
-	done
-	shift $((OPTIND-1))
-
-	local encrypted_data_path="$1"
-	if [[ -z "encrypted_data_path" ]]; then
-		echo "Usage: dec-sym [-f] <encrypted_data_path>"
-		return 1
-	fi
-
-	# -d decrypts the file and pipes the stdout directly to tar
-	gpg $GPG_OPTS -d "$encrypted_data_path" | tar -xf -
-
-	local status_gpg=${PIPESTATUS[0]}
-	local status_tar=${PIPESTATUS[1]}
-	if [[ $status_gpg -eq 0 && $status_tar -eq 0 ]]; then
-		echo "Archive decrypted and extracted to current directory."
-		echo "Remember to re-encrypt this file after you are done."
-	fi
-}
-alias dec='decrypt_extract_symmetrical_gpg'
-
-
-
 # PATH modification
 export PATH="$HOME/.local/bin:$PATH"
-
 export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-# --- SAFEME ALIASES ---
-alias rm='/usr/local/sbin/safe-rm'
+
+
+
+### External functions
+bash_scripts_path="$HOME/.bash_scripts"
+# checks if any scripts exist under this glob and if not returns an error code (which fails the if)
+if compgen -G "$bash_scripts_path/*.bash" >/dev/null; then
+	for script in "$bash_scripts_path"/*.bash; do
+		builtin source "$script"
+	done
+else 
+	echo "Hey where'd your scripts go"
+fi
+
+
+### Lazy loads
+skconfig() {
+	[[ -z "$_lazy_git" ]] && __lazy_git
+	git --git-dir="$HOME"/.skconfig --work-tree="$HOME" "$@"
+}
+complete -F __lazy_git skconfig
+
+nvm () { __lazy_nvm "$@" && command nvm "$@"; }
+node () { __lazy_nvm "$@" && command node "$@"; }
+npm () { __lazy_nvm "$@" && command npm "$@"; }
+npx () { __lazy_nvm "$@" && command npx "$@"; }
+complete -F __lazy_nvm nvm
+complete -F __lazy_nvm node
+complete -F __lazy_nvm npm
+complete -F __lazy_nvm npx
+
+
+__lazy_git() {
+	# associated variable with one
+	# so you can do ! -z _lazy_git or whatever
+	unset -f __lazy_git
+	_lazy_git="yup"
+
+	builtin source /usr/share/bash-completion/completions/git
+	__git_complete skconfig git
+}
+
+__lazy_nvm() {
+	unset -f __lazy_nvm
+	unset -f nvm node npm npx
+
+	complete -r nvm
+	complete -r node
+	complete -r npm
+	complete -r npx
+
+	[ -s "$NVM_DIR/nvm.sh" ] && builtin source "$NVM_DIR/nvm.sh"
+	[ -s "$NVM_DIR/bash_completion" ] && builtin source "$NVM_DIR/bash_completion"
+}
+
+
+
+# useful info:
+## exec >&- 2>&- closes stdout and stderr for the remainder of the script's execution
+
+# useful cli arguments:
+## tree: prints directory recursive, opts: I ignore-pat, L depth, i (no indent lines), f(ull relative path)
+
+
+
+# --- SAFEME ALIASES (START) ---
+if [ -f /usr/local/bin/safe-rm ]; then
+	alias rm='/usr/local/bin/safe-rm'
+elif [ -f $HOME/.local/bin/safe-rm ]; then
+	alias rm='$HOME/.local/bin/safe-rm'
+fi
+
+# Force bash to expand aliases after sudo otherwise it would bypass everything
 alias sudo='sudo '
-# ----------------------
+export SAFERM_confirmPhrases='eradicate them ; remove them ; send them away ; delete them ; confirm ; proceed'
+export SAFERM_triggerCount=10
+
+# Run a check if installed (useful for users who frequently pull down their configuration from github, etc)
+# If safe-rm is installed, this will do absolutely nothing
+amisafe -i
+# --- SAFEME ALIASES (END) ---
