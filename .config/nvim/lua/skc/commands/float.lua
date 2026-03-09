@@ -1,8 +1,9 @@
 local LabTools = require("labtools")
+
 local fuzzyFindPrompt = LabTools.fuzzyFindPrompt
 local logMsg = LabTools.logMsg
-local isEmpty = LabTools.isEmpty
 local trim = LabTools.trim
+local arrFind = LabTools.arrFind
 
 local SCRATCH_WIN_NAME = "[Scratch]"
 
@@ -21,41 +22,27 @@ local map = {
   dockright  = "right"
 }
 
-local FLOATERS = {}
-
-local FLOATING_RECENCY_LIST = {}
-FLOATING_RECENCY_LIST._head = nil
-FLOATING_RECENCY_LIST._tail = nil
+local ALL_WINDOWS = {}
 
 local DOCKED = {}
 
-local WINDOW_FLOATING = false
-local currentFloatingWindow = ""
-local lastAccessedWindow = ""
+local ACCESS_LIST = {}
+local CURRENT_WINDOW_INDEX = 0
 
+local WINDOW_FLOATING = false
+local CURRENT_FLOATING_WINDOW = ""
+
+-- each window must have all these options
+-- so that switches can happen seamlessly
 local DEFAULT_OPTS = {
   width = 0.8,
   height = 0.8,
-  size = 15,
+  size = 0.2,
+  -- this is a weird one tho
+  -- i guess if style == enum.float then its a float?
   style = enum.float,
+  direction = enum.dockleft,
 }
-
-local DEFAULT_DIRECTION = enum.dockleft
-
--- increments by one until valid number found
--- needs to exist so that if a dock becomes a floating winow,
--- we're able to make a new one without overriding the dock
-local function getValidName()
-  local name = SCRATCH_WIN_NAME
-  local i = 1
-
-  while FLOATERS[name] ~= nil do
-    name = string.format("%s (%d)", SCRATCH_WIN_NAME, i)
-    i = i + 1
-  end
-
-  return name
-end
 
 -- creates default win opts
 local function newWinOpts(opts)
@@ -66,74 +53,76 @@ local function newWinOpts(opts)
     width = opts.width or DEFAULT_OPTS.width,
     size = opts.size or DEFAULT_OPTS.size,
 
-    bufnr = -1,
-    winid = -1,
+    bufnr = opts.bufnr or -1,
+    _winid = -1,
 
     style = opts.style or DEFAULT_OPTS.style,
+    direction = opts.direction or DEFAULT_OPTS.direction,
 
-    -- magnitude is used, negative greatest magnitude will get window focus (if all positive, no winfocus change)
+    -- magnitude is used, greatest positive magnitude will get window focus (if all negative, no winfocus change)
     -- lower number means it will be split earlier than docks of same style
-    order = 0,
+    order = opts.order or 0,
   }
 
   return self
 end
 
--- defaults to current winbuffer if winid not provided
+-- increments by one until valid number found
+-- needs to exist so that if a dock becomes a floating winow,
+-- we're able to make a new one without overriding the dock
+local function generateWinTitle()
+  local name = SCRATCH_WIN_NAME
+  local i = 1
+
+  while ALL_WINDOWS[name] ~= nil do
+    name = string.format("%s (%d)", SCRATCH_WIN_NAME, i)
+    i = i + 1
+  end
+
+  return name
+end
+
+local function isWinActive(name)
+  if not name or not ALL_WINDOWS[name] then return false end
+
+  return vim.api.nvim_win_is_valid(ALL_WINDOWS[name]._winid)
+end
+
+-- returns winname of window if we know about it, if not returns nil
 local function isManagedWinid(winid)
-  if not winid then winid = vim.api.nvim_get_current_win() end
+  if not winid then return nil end
 
   for winname, _ in pairs(DOCKED) do
-    if FLOATERS[winname].winid == winid then return winname end
+    if ALL_WINDOWS[winname]._winid == winid then return winname end
   end
 
-  if FLOATERS[currentFloatingWindow] then
-    if winid == FLOATERS[currentFloatingWindow].winid then
-      return currentFloatingWindow
+  if ALL_WINDOWS[CURRENT_FLOATING_WINDOW] then
+    if winid == ALL_WINDOWS[CURRENT_FLOATING_WINDOW]._winid then
+      return CURRENT_FLOATING_WINDOW
     end
   end
 
   return nil
 end
 
--- for a window name, will return its style if it is valid
-local function getDisplayType(name)
-  name = name or currentFloatingWindow
-
-  if isEmpty(name) or name == currentFloatingWindow then
-    return WINDOW_FLOATING and enum.float or nil
-  end
-
-  for winname, _ in pairs(DOCKED) do
-    if winname == name then
-      return vim.api.nvim_win_is_valid(FLOATERS[winname].winid) and FLOATERS[winname].style or nil
-    end
-  end
-
-  return nil
+-- So user can loop through their previously used windows
+local function addToAccessList(winName)
+  table.insert(ACCESS_LIST, winName)
+  return #ACCESS_LIST
 end
 
-local function updateRecencyList(winName)
-  local fart = FLOATING_RECENCY_LIST
-
-  if fart._head == nil then
-    fart._head = winName
-    fart._tail = winName
-  end
-
-  fart[winName] = {
-    prev = fart._head,
-    next = fart._tail,
-  }
-
-  fart[fart._head].next = winName
-  fart[fart._tail].prev = winName
-  fart._head = winName
-end
-
--- does nothing if is not floating window, feel free to call as much as you want
 local function removeFromRecencyList(winname)
-  -- TODO
+  for i, win in ipairs(ACCESS_LIST) do
+    if winname == win then
+      ACCESS_LIST_LENGTH = ACCESS_LIST_LENGTH + 1
+      table.remove(ACCESS_LIST, i)
+      goto END
+    end
+  end
+
+  error("Couldn't find window " .. winname .. " in window list")
+
+  ::END::
 end
 
 -- accepts a window with an attached buffer, and creates a floating window for it
@@ -158,252 +147,239 @@ local function attachFloatWindow(winopts)
     border = "rounded",
   }
 
-  if vim.api.nvim_win_is_valid(winopts.winid) then vim.api.nvim_win_hide(winopts.winid) end
-
-  winopts.winid = vim.api.nvim_open_win(winopts.bufnr, true, win_config)
+  -- hide any existing windows associated with this one
+  if vim.api.nvim_win_is_valid(winopts._winid) then vim.api.nvim_win_hide(winopts._winid) end
+  winopts._winid = vim.api.nvim_open_win(winopts.bufnr, true, win_config)
 end
 
-local function closeCurrentFloating()
-  if not WINDOW_FLOATING then return end
+-- can be called safely: does not do anything if window is already closed
+local function closeWindow(name)
+  if name == nil or ALL_WINDOWS[name] == nil or isWinActive(name) == false then return end
 
-  if vim.api.nvim_win_is_valid(FLOATERS[currentFloatingWindow].winid) then
-    vim.api.nvim_win_hide(FLOATERS[currentFloatingWindow].winid)
-  end
+  vim.api.nvim_win_hide(ALL_WINDOWS[name]._winid)
+  -- this isn't really necessary but im making it clear to myself the window (not the buffer) truly is gone atp
+  ALL_WINDOWS[name]._winid = -1
 
-  WINDOW_FLOATING = false
+  if name == CURRENT_FLOATING_WINDOW then WINDOW_FLOATING = false end
+  DOCKED[name] = nil
 end
 
 -- if passed a winname that is docked, will transform it into a floating window
 -- empty string or null defaults to current floating window
 -- if no current floating window, will make a new valid one
 -- places the window buffer last in recency list
-local function toggleFloatWindow(name)
-  if WINDOW_FLOATING == true then
-    logMsg("closing " .. currentFloatingWindow)
+-- optionally accepts buffer to place into window (if not provided will make an empty one)
 
-    closeCurrentFloating()
-    if isEmpty(name) or name == currentFloatingWindow then return end
+
+-- pure convenience function
+-- returns a number if the window was new (which is its index to save computation time)
+local function __updateWindow(name)
+  local new_win_index = null
+
+  -- if this is a new window, we automatically know the window index is at the end
+  if not ALL_WINDOWS[name] then
+    new_win_index = addToAccessList(name)
   end
 
-  if isEmpty(currentFloatingWindow) then currentFloatingWindow = name or getValidName() end
-  if isEmpty(name) then name = currentFloatingWindow end
-
-  logMsg("making window " .. name)
-
-  if not FLOATERS[name] then
-    logMsg("creating new floater " .. name)
-    local bufnr = vim.api.nvim_create_buf(false, true)
-
-    local winopts = newWinOpts()
-    winopts.bufnr = bufnr
-    FLOATERS[name] = winopts
-
-    updateRecencyList(name)
-  end
-
-  attachFloatWindow(FLOATERS[name])
-  currentFloatingWindow = name
-  lastAccessedWindow = name
-  WINDOW_FLOATING = true
-
-  logMsg("current float: " .. currentFloatingWindow)
+  -- allow user to pass in configs to change their windows
+  ALL_WINDOWS[name] = newWinOpts(winopts)
+  return new_win_index
 end
 
-local function closeCurrentlyDocked(name)
-  if name == nil or DOCKED[name] == nil then return end
 
-  vim.api.nvim_win_hide(FLOATERS[name].winid)
-  DOCKED[name] = nil
+-- TODO: GET HIPATTERNS WORKING AGAIN... ):
+-- BUT ACTUALLY ALLOW USER TO PASS CUSTOM OPTIONS
+local function toggleFloatWindow(name, winopts)
+  if not name then error("Expected name, got nil") return end
+  logMsg("closing " .. CURRENT_FLOATING_WINDOW)
+
+  if isWinActive(CURRENT_FLOATING_WINDOW) then
+    closeWindow(CURRENT_FLOATING_WINDOW)
+
+    if name == CURRENT_FLOATING_WINDOW then return end
+  end
+
+  local new_win_index = nil
+
+  if not ALL_WINDOWS[name] or winopts ~= nil then
+    new_win_index = __updateWindow(name)
+  end
+
+  if not vim.api.nvim_buf_is_valid(ALL_WINDOWS[name].bufnr) then
+    -- TODO: allow user to pass a function that generates a default buffer if one not found
+    ALL_WINDOWS[name].bufnr = vim.api.nvim_create_buf(false, true)
+  end
+
+  attachFloatWindow(ALL_WINDOWS[name])
+  CURRENT_FLOATING_WINDOW = name
+  WINDOW_FLOATING = true
+
+  if not new_win_index then
+    new_win_index = arrFind(ACCESS_LIST, name)
+    if new_win_index == nil then error("new_win_index should have been added to ACCESS_LIST") end
+  end
+
+  CURRENT_WINDOW_INDEX = new_win_index
+  logMsg("successfully switched to float " .. CURRENT_FLOATING_WINDOW)
 end
 
 -- like attachFloatWindow, but for dock
--- optionally accepts a splitwinid to start the split from, and a style for where to put the win
-local function attachDockWindow(winopts, splitwinid, style)
-  if winopts.style == enum.float or style ~= nil then
-    winopts.style = style or DEFAULT_DIRECTION
-  end
-
+-- TODO: LEARN HOW SPLITS WORK SO YOU CAN FIGURE OUT WHAT ARGUMENTS THIS SHOULD ACCEPT
+local function attachDockWindow(winopts)
   local win_config = {
-    win = splitwinid or 0,
+    -- TODO: find out do we need a window to split from? or can we split relative to the whole screen?
+    win = 0,
     split = map[winopts.style]
   }
 
-  if vim.api.nvim_win_is_valid(winopts.winid) then vim.api.nvim_win_hide(winopts.winid) end
-
-  winopts.winid = vim.api.nvim_open_win(winopts.bufnr, false, win_config)
+  -- undesirable to have multiple windows of same buffer open
+  if vim.api.nvim_win_is_valid(winopts._winid) then vim.api.nvim_win_hide(winopts._winid) end
+  winopts._winid = vim.api.nvim_open_win(winopts.bufnr, false, win_config)
 end
 
 -- similar to toggleFloatWindow but instead creates a docked window
--- optionally accepts a style (not enum.float)
--- if passed a winname that is floating, will transform it into a docked window (with default dock)
--- NOTE: if this happens it will be removed from recency list
--- empty string or null defaults to current floating window
--- if no current floating window, will make a new valid one
-local function toggleDockWindow(name, style)
-  if style == enum.float then error("float is not a valid dock style.") end
+-- if passed a winname that is floating, will transform it into a docked window using its direction property
+local function toggleDockWindow(name, winopts)
+  if name == nil then error("Expected name, got nil") end
 
-  if not isEmpty(name) and DOCKED[name] then
-    closeCurrentlyDocked(name)
+  if isWinActive(name) then
+    -- TODO: should we automatically close floating window here as well?
+    closeWindow(name)
     return
   end
 
-  if isEmpty(name) then name = getValidName() end
-
-  if not FLOATERS[name] then
-    logMsg("creating new dock " .. name)
-    local bufnr = vim.api.nvim_create_buf(false, true)
-
-    local winopts = newWinOpts()
-    winopts.bufnr = bufnr
-    FLOATERS[name] = winopts
+  local new_win_index = nil
+  if not ALL_WINDOWS[name] or winopts ~= nil then
+    new_win_index = __updateWindow(name)
   end
 
-  if name == currentFloatingWindow then
-    closeCurrentFloating()
-    currentFloatingWindow = ""
-    removeFromRecencyList(currentFloatingWindow)
+  if not vim.api.nvim_buf_is_valid(ALL_WINDOWS[name].bufnr) then
+    winopts.bufnr = vim.api.nvim_create_buf(false, true)
   end
 
-  lastAccessedWindow = name
-  attachDockWindow(FLOATERS[name], 0, style)
+  attachDockWindow(ALL_WINDOWS[name])
   DOCKED[name] = true
+
+  if not new_win_index then
+    new_win_index = arrFind(ACCESS_LIST, name)
+    if new_win_index == nil then error("new_win_index should have been added to ACCESS_LIST") end
+  end
+
+  CURRENT_WINDOW_INDEX = new_win_index
+  logMsg("successfully switched to dock " .. CURRENT_FLOATING_WINDOW)
 end
 
 local function closeAllWindows()
-  closeCurrentFloating()
-
-  for name, _ in pairs(DOCKED) do
-    closeCurrentlyDocked(name)
+  for name, _ in pairs(ALL_WINDOWS) do
+    closeWindow(name)
   end
 end
 
 -- hey export this one too
 local function deleteWindow(name)
-  if isEmpty(name) then name = currentFloatingWindow end
+  if name == nil then error("Expected name, got nil") end
+  if ALL_WINDOWS[name] == nil then error(name .. " is not a valid window; failed to delete") end
 
-  if FLOATERS[name] == nil then return end
-
-  if name == currentFloatingWindow then
-    currentFloatingWindow = ""
-  end
-
+  closeWindow(name)
   removeFromRecencyList(name)
-
-  local winid = FLOATERS[name].winid
-  if vim.api.nvim_win_is_valid(winid) then
-    vim.api.nvim_win_hide(winid)
-  end
-
-  FLOATERS[name] = nil
+  ALL_WINDOWS[name] = nil
   DOCKED[name] = nil
+
+  -- TODO: DO THIS IN YOUR REMVOE FROM RECENCY LIST FUNC 
+  if CURRENT_FLOATING_WINDOW == name then CURRENT_FLOATING_WINDOW = "" end
 end
 
--- autoredirects based on style. (maybe export this one?)
-local function toggleFloat(name, style)
-  -- if no name provided, use name of current buffer
-  -- if that isn't managed either, just make a new buffer
-  if isEmpty(name) then
-    local validWin = isManagedWinid()
+local function toggleWindow(name, winopts)
+  if name == "" or name == nil then error("Cannot activate a window with no name") end
 
-    if validWin then name = validWin end
+  local isFloat = DEFAULT_OPTS.style == enum.float
+  if ALL_WINDOWS[name] then
+    isFloat = ALL_WINDOWS[name].style == enum.float
   end
 
-  if isEmpty(style) then
-    if not isEmpty(name) and FLOATERS[name] then
-      style = FLOATERS[name].style
-    else
-      style = DEFAULT_OPTS.style
-    end
-  end
-
-  -- if we can't find name from that, we at least have a style, so default options for that
-  if style == enum.float then
-    toggleFloatWindow(name)
-  else
-    toggleDockWindow(name, style)
-  end
+  if isFloat then toggleFloatWindow(name, winopts) else toggleDockWindow(name, winopts) end
 end
 
-local function toggleFloatFromFuzzy()
-  local floaters = vim.tbl_keys(FLOATERS)
-
-  fuzzyFindPrompt(floaters, function(item)
-    toggleFloat(item)
-  end)
-end
-
-local function toggleFloatFromInput()
+local function toggleWindowFromInput()
   vim.ui.input({ prompt = "Window name: " }, function(input)
     if input == nil then return end
 
     input = trim(input)
-    if isEmpty(input) then input = SCRATCH_WIN_NAME end
+    if input == "" then input = generateWinTitle() end
 
-    if string.sub(input, 1, 1) == "_" then
-      logMsg("Please provide a valid window name (no leading underscores allowed)")
+    if string.find(input, "^[^a-zA-z]") == nil then
+      vim.notify("Please provide a valid window name (must start with a letter)", vim.log.levels.ERROR)
       return
     end
 
-    toggleFloat(input)
+    toggleWindow(input)
   end)
 end
 
-local function togglePrevWindow()
-  toggleFloat(FLOATING_RECENCY_LIST[currentFloatingWindow].prev)
+local function toggleWindowFromFuzzy()
+  local floaters = vim.tbl_keys(ALL_WINDOWS)
+  local newwin = "* Add New Window"
+  table.insert(floaters, newwin)
+
+  fuzzyFindPrompt(floaters, "Pick a window", function(item)
+    if item == newwin then
+      toggleWindowFromInput()
+      return
+    end
+
+    toggleWindow(item)
+  end)
 end
 
-local function toggleNextWindow()
-  toggleFloat(FLOATING_RECENCY_LIST[currentFloatingWindow].next)
-end
-
-local function toggleLastWindow()
-  toggleFloat(FLOATING_RECENCY_LIST._tail)
-end
-
-local function toggleFirstWindow()
-  toggleFloat(FLOATING_RECENCY_LIST._head)
-end
-
-local function swapCurrentFloatType()
-  local name = isManagedWinid()
+---@diagnostic disable
+local function swapWindowType()
+  local name = isManagedWinid(vim.api.nvim_get_current_win())
 
   if name == nil then
-    logMsg("you are not in a float!")
+    vim.notify("you are not in a float!", vim.log.levels.WARN)
     return
   end
 
-  local winopts = FLOATERS[name]
+  local winopts = ALL_WINDOWS[name]
 
   if winopts.style == enum.float then
-    winopts.style = DEFAULT_DIRECTION
-  end
+    -- don't screw over the user if they pass bad winopts
+    if winopts.direction == enum.float then
+      vim.notify("Passed invalid winopts data (direction), returning to defaults", vim.log.levels.WARN)
+      winopts.direction = DEFAULT_OPTS.direction
+    end
 
-  if winopts.style == enum.float then
-    toggleFloatWindow(name)
-  else
+    winopts.style = winopts.direction
     toggleDockWindow(name)
+    return
   end
+
+  winopts.style = enum.float
+  toggleFloatWindow(name)
 end
+---@diagnostic enable
 
-vim.keymap.set("n", "<Leader>O", toggleFloat, { desc = "[O]pen last floater" })
-vim.keymap.set("n", "<Leader>of", toggleFloatFromFuzzy, { desc = "[O]pen [F]loater" })
-vim.keymap.set("n", "<Leader>on", toggleFloatFromInput, { desc = "[O]pen [N]ew floater" })
+vim.keymap.set("n", "<Leader>O", function()
+  toggleWindow(ACCESS_LIST[CURRENT_WINDOW_INDEX] or generateWinTitle())
+end, { desc = "[O]pen last floater" })
 
-vim.keymap.set("n", "<Leader>oh", swapCurrentFloatType, { desc = "[O]h [H]ell no" })
+vim.keymap.set("n", "<Leader>of", toggleWindowFromFuzzy, { desc = "[O]pen [F]loater" })
 
-local group = vim.api.nvim_create_augroup("SKC_FloatLifecycle", { clear = true })
+vim.keymap.set("n", "<Leader>oh", swapWindowType, { desc = "[O]h [H]ell no" })
 
+local augroup = vim.api.nvim_create_augroup("SKC_FloatLifecycle", { clear = true })
 vim.api.nvim_create_autocmd({ "WinResized" }, {
-  group = group,
+  group = augroup,
+  desc = "Allows split windows to persist across tabs",
+
   callback = function()
+    ---@diagnostic disable-next-line: param-type-mismatch
     for _, winid in ipairs(vim.v.event.windows) do
-      if isManagedWinid(winid) then
-        logMsg(string.format("Managed window %s resized to %d", isManagedWinid(winid), vim.api.nvim_win_get_width(winid)))
+      local name = isManagedWinid(winid)
+
+      if name then
+        logMsg(string.format("Managed window %s resized to %d", name, vim.api.nvim_win_get_width(winid)))
       end
     end
-  end,
-  desc = "Allows split windows to persist across tabs",
+  end
 })
-
-vim.keymap.set("i", "<C-p>", togglePrevWindow)
-vim.keymap.set("i", "<C-n>", toggleNextWindow)

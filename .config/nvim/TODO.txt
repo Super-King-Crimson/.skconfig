@@ -7,10 +7,8 @@ make the function jumper of your dreams
 vim.lsp.buf.document_symbol
 vim.lsp.ListOpts
 
-make keybinds for window <A-hjkl>
-
-figure out how to hack input remapper to free up shiftlock
-
 create easy, exportable version of config (howdoiexit.nvim)
 
 BRO THERE'S A WSL OPTION FOR NVIM IM CRINGGGG
+
+Make a plugin that allows you to re-open closed tabs

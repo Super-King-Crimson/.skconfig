@@ -15,14 +15,15 @@ export EDITOR="$HOME/.local/bin/nvim"
 export SUDO_EDITOR="$EDITOR"
 export TERMINAL="kitty"
 
+# for use with nvim
+export MANWIDTH=999
 export MANPAGER="nvim +Man!"
 
 # file where marks will be saved for Man files
 export man_shada=$HOME/.manshada
 
-
-
-
+### always have vi be system implementation of vi
+unalias vi 2>/dev/null
 
 
 # If not running interactively, don't do anything else
@@ -62,7 +63,7 @@ fi
 # add your terminal here
 color_prompt='no'
 case "$TERM" in
-	*kitty*) color_prompt='yes';;
+	*[si]tty*) color_prompt='yes';;
 	*konsole*) color_prompt='yes';;
 	*gnome*) color_prompt='yes';;
 	*color*) color_prompt='yes';;
@@ -104,6 +105,7 @@ bind '"\e[1;2F": kill-line'
 
 ### Aliases and functions
 alias ls='ls --color=auto -AF'
+# a ls-tee: prints original list while piping output
 alias la='command ls --color=auto -a'
 alias l='command ls --color=auto'
 alias ll='command ls -alFh'
@@ -148,8 +150,9 @@ bat() {
 }
 
 clip() {
-	xclip -selection clipboard
-	echo Copied to clipboard.
+	# prints to the terminal
+	tee /dev/tty | xclip -selection clipboard
+	printf '\nCopied to clipboard.\n'
 }
 alias copy="clip"
 

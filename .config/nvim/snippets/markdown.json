@@ -75,8 +75,8 @@
         "description": "Insert code"
     },
     "Insert code block": {
-        "prefix": "codeblock",
-        "body": ["```${1:language}", "$0", "```"],
+        "prefix": "cb",
+        "body": ["```", "```"],
         "description": "Insert fenced code block"
     },
     "Insert unordered list": {

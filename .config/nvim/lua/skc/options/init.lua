@@ -1,7 +1,15 @@
 -- Options --
+vim.opt.termguicolors = true
+vim.o.laststatus = 3
+
+-- Use treesitter to work out our folds
+vim.o.foldmethod = "expr"
+vim.o.foldexpr = "v:lua.vim.treesitter.foldexpr()"
 vim.o.foldlevel = 99
 vim.o.foldlevelstart = 99
 vim.o.foldenable = true
+
+vim.o.indentexpr = 'v:lua.vim.treesitter.indentexpr()'
 
 vim.o.wrap = false
 vim.o.updatetime = 250
@@ -52,8 +60,7 @@ vim.o.cursorline = true
 vim.o.scrolloff = 999
 vim.o.confirm = true
 
--- Save and restore things to SHAred DAta file (persist after shutdown and on closing vim)
--- !  = global variables
+-- Save and restore things to SHAred DAta file (persist after shutdown and on closing vim) !  = global variables
 -- %n = store the n most recently opened buffers
 -- 'n = store marks for the n most recently opened files
 -- /n = store n recently used search pattern items
@@ -65,3 +72,4 @@ vim.o.shada = "'10,/0,:100,@100,h,s100"
 
 require("skc.options.diagnostics")
 require("skc.options.neovide")
+require("skc.options.wintitle")

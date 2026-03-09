@@ -3,6 +3,14 @@ local LabTools = {}
 local silent = false
 local debugMode = false
 
+function LabTools.arrFind(haystack, needle)
+  for i, hay in ipairs(haystack) do
+    if hay == needle then return i end
+  end
+
+  return nil
+end
+
 -- obeys wildignore and returns list
 function LabTools.getChildrenAbs(path, wildignore)
   if not wildignore then wildignore = false end
@@ -108,21 +116,21 @@ vim.api.nvim_create_autocmd("User", {
   end,
 })
 
-function LabTools.fuzzyFindPrompt(items, callback)
+function LabTools.fuzzyFindPrompt(items, wintitle, callback)
   if #items == 0 then
     LabTools.logMsg("No elements found.", vim.log.levels.ERROR)
     return false
   end
 
   if not pickers then
-    error("You must have telescope installed to fuzzy find.")
+    vim.notify("You must have telescope installed to fuzzy find.", vim.log.levels.ERROR)
     return false
   end
 
   LabTools.logDebug("options: " .. table.concat(items, " | "), vim.log.levels.INFO)
 
   local opts = {
-    prompt_title = "Session Selection",
+    prompt_title = wintitle,
     finder = finders.new_table({
       results = items,
     }),
@@ -136,6 +144,7 @@ function LabTools.fuzzyFindPrompt(items, callback)
           callback(items[selection.index])
         end
       end)
+
       return true
     end,
   }

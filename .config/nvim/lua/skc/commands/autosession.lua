@@ -1,8 +1,9 @@
 -- don't forget this trailing slash
+local M = {}
+
 local SESSION_DIR = vim.fn.stdpath("data") .. "/autosessions/"
 
-local defaultSessionName = "_latest"
-local pointedTo = nil
+local defaultSessionName = "latest"
 local currSession = nil
 
 local LabTools = require("labtools")
@@ -90,7 +91,7 @@ end
 local function loadAutosessionFromFuzzyFind()
   local sessionList = getAutosessions()
 
-  fuzzyFindPrompt(sessionList, function(item)
+  fuzzyFindPrompt(sessionList, "Session Selection", function(item)
     loadAutosession(item)
   end)
 end
@@ -143,27 +144,38 @@ vim.keymap.set("n", "<Leader>ol", loadAutosessionFn, { desc = "[O]pen [L]atest s
 
 
 
+M.whichAutosession = function()
+  if currSession == nil then return nil end
 
+  local thisAutosession = currSession
 
-local function whichAutosessionFn()
-  -- is default session a symlink to a different session
   local isPointer = false
-
-  if currSession == defaultSessionName then
+  if thisAutosession == defaultSessionName then
     local path = getFullPathFromSessionName(defaultSessionName)
 
-    isPointer = vim.uv.fs_readlink(path) ~= nil
+    local linkTarget = vim.uv.fs_readlink(path)
+    if linkTarget ~= nil then
+      -- we always set up our links to use full paths, so this should always work
+      thisAutosession = getSessionNameFromFullPath(linkTarget)
+      isPointer = true
+    end
   end
 
   -- don't worry too much about this it formats output
-  print(string.format("Session: %s%s", isPointer and defaultSessionName .. " > " or "", currSession))
+  return string.format("%s%s", isPointer and defaultSessionName .. " > " or "", thisAutosession)
+end
+
+local function whichAutosessionFn()
+  local currSession = M.whichAutosession()
+  if currSession == nil then return end
+
+  print("Session: " .. currSession)
 end
 vim.api.nvim_create_user_command("WhichAutosession", whichAutosessionFn, {
   force = true,
   desc = "Output the name of your current session",
 })
 vim.keymap.set("n", "<Leader>?s", whichAutosessionFn, { desc = "Which [S]ession?" })
-
 
 
 
@@ -214,3 +226,5 @@ vim.api.nvim_create_autocmd({ "VimLeave" }, {
     end
   end,
 })
+
+return M

@@ -54,7 +54,7 @@ MiniFiles.setup({
     reset       = ";",
     mark_set    = 'm',
     mark_goto   = "'",
-    reveal_cwd  = '@',
+    reveal_cwd  = '',
     show_help   = 'g?',
     trim_left   = '<',
     trim_right  = '>',
