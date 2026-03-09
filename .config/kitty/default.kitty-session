@@ -1,0 +1,4 @@
+os_window_state fullscreen
+launch --hold --env KITTY_PARENT=yes nvim
+new_tab
+launch --env KITTY_CHILD=yes bash
