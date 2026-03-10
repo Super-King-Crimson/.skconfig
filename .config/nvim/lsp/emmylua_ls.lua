@@ -14,8 +14,8 @@ local debug_mode = true
 local backup = true
 
 local stdconfig = vim.fn.stdpath("config")
-local emmyrc_tail = "/.emmyrc.json"
-local emmylua_tail = "/.emmyrc.bak.lua"
+local emmyrc_tail = ".emmyrc.json"
+local emmylua_tail = ".emmyrc.bak.lua"
 
 -- load all directories across the runtime files
 local include = vim.api.nvim_get_runtime_file("", true)
@@ -32,7 +32,6 @@ local emmy_settings = {
   ['$schema'] = schema,
   workspace = {
     library = include,
-    -- workspace roots will be chosen dynamically in below functions
   },
 
   runtime = {
@@ -145,11 +144,10 @@ local function overwrite_previous_config(dir, config)
 
     -- file had invalid json
     if result == false and backup == true then
-      vimnotify("Couldn't create backup: " .. emmyrc .. " had bad json", vim.log.levels.WARN)
+      vimnotify("Couldn't create lua backup: " .. emmyrc .. " had bad json", vim.log.levels.WARN)
       exit_code = 2
       goto AFTER_LUA_WRITE
     end
-
 
     if vim.deep_equal(file_settings, config) then
       vimnotify("Config is up to date. Exiting.", vim.log.levels.DEBUG)
@@ -189,8 +187,6 @@ end
 
 -- modify client config before init
 local function update_emmyrc(root)
-  vimnotify("what the fuck " .. root, vim.log.levels.ERROR)
-
   local config = vim.deepcopy(emmy_settings)
 
   -- 0: successful file overwrite, 1: file overwrite skipped, 2: file overwrite failed
@@ -231,21 +227,24 @@ return {
     -- allow automatic loading of emmyrc with .loademmy in same directory as .emmyrc.json
     if root ~= nil and root ~= stdconfig and not vim.uv.fs_stat(vim.fs.joinpath(root, ".loademmy")) then
       vimnotify("Skipping: loading not preferred")
-      returnon_dir(root) 
+      vimnotify("root: " .. root)
+      on_dir(root) 
       return root
     end
 
     local bufname = vim.api.nvim_buf_get_name(bufnr)
-    if string.find(bufname, stdconfig, 1, true) then
+    if string.find(string.sub(bufname, 1, string.len(stdconfig)), stdconfig, 1, true) then
       root = stdconfig
     else
       -- if current buffer is not a child of stdconfig, then give up and just activate with no .emmyrc.json
+      vimnotify("skipped, root: " .. root)
       on_dir(vim.fn.getcwd())
       return vim.fn.getcwd()
     end
 
     -- otherwise, update emmyrc before we start
     update_emmyrc(root)
+    vimnotify("updated file, root: " .. root)
     on_dir(root)
     return root
   end,
