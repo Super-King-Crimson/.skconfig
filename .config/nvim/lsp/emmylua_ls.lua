@@ -4,11 +4,10 @@
 
 -- NOTE: you can load your nvim emmyrc into another project by creating a .loademmy file in the the project root
 
-local schema =
-"https://raw.githubusercontent.com/EmmyLuaLs/emmylua-analyzer-rust/refs/heads/main/crates/emmylua_code_analysis/resources/schema.json"
+local schema = "https://raw.githubusercontent.com/EmmyLuaLs/emmylua-analyzer-rust/refs/heads/main/crates/emmylua_code_analysis/resources/schema.json"
 
 -- toggle this if the messages get annoying
-local silent_mode = true
+local silent_mode = false
 local debug_mode = true
 
 -- alternatively, just disable backups
@@ -18,36 +17,22 @@ local stdconfig = vim.fn.stdpath("config")
 local emmyrc_tail = "/.emmyrc.json"
 local emmylua_tail = "/.emmyrc.bak.lua"
 
--- individual plugins that contain a lua directory
-local include = { vim.env.VIMRUNTIME }
+-- load all directories across the runtime files
+local include = vim.api.nvim_get_runtime_file("", true)
 
--- make sure each individual plugin within these directories has its own lua directory or it won't be loaded
-local package_paths = { vim.fn.stdpath("data") .. "/lazy", }
+-- optional: tell emmylua about vim.uv
+-- make a place to store external libraries (i chose stdpath("config")/lsp/3rd)
+-- if it isn't in your nvim config, you'll have to tell emmyls where it is by adding it as a packpath
+-- copy this file into that path: https://github.com/Bilal2453/luvit-meta/blob/8bf02dcd176479ef148849ffceb58b6e8a41b05d/library/uv.lua
+table.insert(include, vim.fs.joinpath(stdconfig, "lsp/3rd"))
 
--- if this isn't working, you can also do this, i wouldn't really recommend it though
--- for _, path in ipairs(vim.api.nvim_get_runtime_file("", true)) do
---   table.insert(plugpaths, path)
---   table.insert(lib, path)
--- end
-
-local library = include
-
-for _, packpath in ipairs(package_paths) do
-  for _, plug in ipairs(vim.fn.readdir(packpath)) do
-    table.insert(library, packpath .. "/" .. plug)
-  end
-end
 
 -- all settings can be found at https://github.com/EmmyLuaLs/emmylua-analyzer-rust/blob/main/docs/config/emmyrc_json_EN.md
 local emmy_settings = {
   ['$schema'] = schema,
   workspace = {
-    library = library,
-    ignoreDir = {
-      "after",
-      "snippets",
-      "lsp",
-    },
+    library = include,
+    -- workspace roots will be chosen dynamically in below functions
   },
 
   runtime = {
@@ -62,7 +47,7 @@ local emmy_settings = {
   completion = {
     enable = true,
     callSnippet = false,
-    autoRequireNamingConvention = falsefalse,
+    autoRequireNamingConvention = false,
   },
 
   diagnostics = {
@@ -86,12 +71,6 @@ local emmy_settings = {
     },
   },
 }
-
-
--- optional: tell emmylua about vim.uv
--- make a place to store external libraries (i chose stdpath("data")/after/lsp/3rd)
--- if it isn't in your nvim config, you'll have to tell emmyls where it is by adding it as a packpath
--- copy this file into that path: https://github.com/Bilal2453/luvit-meta/blob/8bf02dcd176479ef148849ffceb58b6e8a41b05d/library/uv.lua
 
 
 -- LOGIC
@@ -148,31 +127,36 @@ local function format_json(json_str)
 end
 
 -- returns true if changes were made
-local function overwrite_previous_config(dir)
-  local emmyrc = dir .. emmyrc_tail
+local function overwrite_previous_config(dir, config)
+  -- 0: successful file overwrite, 1: file overwrite skipped, 2: file overwrite failed
+  local exit_code = 0
+
+  local emmyrc = vim.fs.joinpath(dir, emmyrc_tail)
 
   -- if exists, will be saved
   if vim.fn.filereadable(emmyrc) == 1 then
     local file = io.open(emmyrc, "r")
 
     -- reads whole file (must use *a or only reads one line)
-    local contents = file:read("*a") or ""
+    local contents = file:read("*a")
     file:close()
 
     local result, file_settings = pcall(vim.json.decode, contents, { luanil = { object = true, array = true } })
 
     -- file had invalid json
-    if result == false then
+    if result == false and backup == true then
       vimnotify("Couldn't create backup: " .. emmyrc .. " had bad json", vim.log.levels.WARN)
+      exit_code = 2
       goto AFTER_LUA_WRITE
     end
 
-    if vim.deep_equal(file_settings, emmy_settings) then
+
+    if vim.deep_equal(file_settings, config) then
       vimnotify("Config is up to date. Exiting.", vim.log.levels.DEBUG)
-      return false
+      return 1
     end
 
-    if not backup then
+    if backup == false then
       vimnotify("Backup not requested, skipping to after backup")
       goto AFTER_BACKUP
     end
@@ -193,34 +177,39 @@ local function overwrite_previous_config(dir)
   end
 
   ::AFTER_BACKUP::
-  local encode = vim.json.encode(emmy_settings)
+  local encode = vim.json.encode(config)
   encode = format_json(encode)
 
   local file = io.open(emmyrc, "w+")
   file:write(encode)
   file:close()
 
-  return true
+  return exit_code
 end
 
 -- modify client config before init
 local function update_emmyrc(root)
-  local backed_up = backup and vim.fn.filereadable(vim.fs.joinpath(root, emmyrc_tail)) == 1
-  local success, updated = pcall(overwrite_previous_config, root)
+  vimnotify("what the fuck " .. root, vim.log.levels.ERROR)
 
-  if success == true and updated == false then return end
+  local config = vim.deepcopy(emmy_settings)
 
-  if success == true and updated == true then
-    if backed_up then
-      vimnotify("Successfully overwrote previous .emmyrc.json.", vim.log.levels.INFO)
-      vimnotify(string.format("Previous settings at %s and %s.bak.", path .. emmylua_tail, path .. emmyrc_tail), vim.log.levels.INFO)
-      vimnotify("Please copy them over to your lspconfig if you prefer them.", vim.log.levels.INFO)
-    else
-      vimnotify("Successfully created .emmyrc.json.", vim.log.levels.INFO)
-    end
-  else
+  -- 0: successful file overwrite, 1: file overwrite skipped, 2: file overwrite failed
+  local success, exit_code = pcall(function() return overwrite_previous_config(root, config) end)
+
+  if success == false then
     vim.notify("Attempted to create a new .emmyrc.json, but it failed.", vim.log.levels.ERROR)
-    vim.notify("error: " .. updated, vim.log.levels.ERROR)
+    vim.notify("error: " .. exit_code, vim.log.levels.ERROR)
+    return
+  end
+
+  if exit_code == 0 and backup == true then
+    vimnotify("Successfully overwrote previous .emmyrc.json.", vim.log.levels.INFO)
+    vimnotify(string.format("Previous settings at %s and %s.bak.", vim.fs.joinpath(root, emmylua_tail), vim.fs.joinpath(root, emmyrc_tail)), vim.log.levels.INFO)
+  elseif exit_code == 2 then
+    vimnotify("Successfully updated .emmyrc.json, but unable to create backup files.", vim.log.levels.WARN)
+    vimnotify("To ignore this message permanently, please explicitly disable backups.", vim.log.levels.WARN)
+  elseif exit_code ~= 1 then
+    vimnotify("Successfully updated .emmyrc.json.", vim.log.levels.INFO)
   end
 end
 
@@ -233,27 +222,31 @@ local root_markers = {
 ---@type vim.lsp.Config
 return {
   cmd = { 'emmylua_ls' },
+  filetypes = { 'lua' },
 
   root_dir = function(bufnr, on_dir)
     local root = vim.fs.root(bufnr, root_markers)
+
     -- stall stdconfig, we have to load our emmyrc
     -- allow automatic loading of emmyrc with .loademmy in same directory as .emmyrc.json
     if root ~= nil and root ~= stdconfig and not vim.uv.fs_stat(vim.fs.joinpath(root, ".loademmy")) then
-      return on_dir(root)
+      vimnotify("Skipping: loading not preferred")
+      returnon_dir(root) 
+      return root
     end
 
     local bufname = vim.api.nvim_buf_get_name(bufnr)
-    if string.find(bufname, stdconfig) then
+    if string.find(bufname, stdconfig, 1, true) then
       root = stdconfig
     else
-    -- if current buffer is not a child of stdconfig, then give up and just activate with no .emmyrc.json
-      return on_dir(vim.fn.getcwd())
+      -- if current buffer is not a child of stdconfig, then give up and just activate with no .emmyrc.json
+      on_dir(vim.fn.getcwd())
+      return vim.fn.getcwd()
     end
 
     -- otherwise, update emmyrc before we start
     update_emmyrc(root)
     on_dir(root)
+    return root
   end,
-
-  filetypes = { 'lua' },
 }
