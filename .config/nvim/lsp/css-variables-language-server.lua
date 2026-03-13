@@ -1,5 +1,6 @@
 ---@type vim.lsp.Config
 return {
+  -- see ts
   cmd = { "css-variables-language-server", "--stdio" },
   filetypes = { "css", "scss", "less" },
 

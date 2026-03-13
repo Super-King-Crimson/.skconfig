@@ -6,13 +6,14 @@ local FORMATTERS_BY_FT = {
 }
 
 local AUTOFORMAT_DISABLED_FT = {
+  c = true,
   cpp = true,
   lua = true,
 }
 
 local ENSURE_INSTALLED = {
   servers = {
-    "emmylua_ls",
+    "lua-language-server",
     "luau-lsp",
     "rust-analyzer",
     "css-variables-language-server",
@@ -116,7 +117,7 @@ return {
             score_offset = 1,
           },
           lsp = {
-            score_offset = 0,
+            score_offset = 2,
           }
         }
       },

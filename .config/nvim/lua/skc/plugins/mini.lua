@@ -10,7 +10,12 @@ return { -- Collection of various small independent plugins/modules
     require("skc/plugins/miniconfig/snippets")
 
     local MiniSurround = require("mini.surround")
-    MiniSurround.setup({})
+    MiniSurround.setup({
+      mappings = {
+        add = "S",
+        highlight = "",
+      }
+    })
 
     require("mini.pairs").setup({
       modes = { command = true },

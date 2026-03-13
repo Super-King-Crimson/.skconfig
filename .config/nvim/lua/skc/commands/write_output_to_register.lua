@@ -20,6 +20,9 @@ _G.w = G.writeOutputToRegister
 
 vim.keymap.set("c", "<C-r><C-w>", "<Home>lua writeOutputToRegister([=[<End>]=])<Left>")
 
+-- * means current visual selection
+vim.keymap.set("v", "<C-r><C-w>", "<cmd>redir @+<CR><cmd>*lua<CR><cmd>redir END<CR>")
+
 function G.writeOutputToRegister(cmd, reg, verbose)
   reg = reg or "+"
   verbose = verbose or true

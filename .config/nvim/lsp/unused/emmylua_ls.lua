@@ -1,4 +1,4 @@
--- NOTE: you can load your nvim emmyrc into another project by creating a .loademmy file in the the project root
+---@diagnostic disable: unnecessary-if
 local schema = "https://raw.githubusercontent.com/EmmyLuaLs/emmylua-analyzer-rust/refs/heads/main/crates/emmylua_code_analysis/resources/schema.json"
 
 -- toggle this if the messages get annoying
@@ -6,8 +6,9 @@ local silent_mode = false
 local debug_mode = false
 
 -- alternatively, just disable backups
-local backup = true
--- and to manually change it in the .emmyrc.json, set this to false
+local backup = false
+
+-- and to manually change your config in .emmyrc.json, set this to off
 local auto_update = true
 
 local stdconfig = vim.fn.stdpath("config") --[[@as string]]
@@ -17,11 +18,11 @@ local emmylua_tail = ".emmyrc.bak.lua"
 -- load all directories across the runtime files
 local include = {}
 
--- but not our config directory
-local stdconfig_len = string.len(stdconfig)
 local dirs = vim.api.nvim_get_runtime_file("", true)
 table.sort(dirs)
 
+-- but not our config directory
+local stdconfig_len = string.len(stdconfig)
 for _, dir in ipairs(dirs) do
   if not string.find(string.sub(dir, 1, stdconfig_len), stdconfig, 1, true) then
     table.insert(include, dir)
@@ -34,6 +35,7 @@ end
 -- copy this file into that path: https://github.com/Bilal2453/luvit-meta/blob/8bf02dcd176479ef148849ffceb58b6e8a41b05d/library/uv.lua
 table.insert(include, vim.fs.joinpath(stdconfig, "lsp/3rd"))
 
+-- NOTE: you can load your nvim emmyrc into another project by creating a .loademmy file in the the project root
 
 -- all settings can be found at https://github.com/EmmyLuaLs/emmylua-analyzer-rust/blob/main/docs/config/emmyrc_json_EN.md
 local emmy_settings = {
@@ -42,6 +44,10 @@ local emmy_settings = {
     library = include,
     ignoreDir = {
       -- put all lspconfigs you're not using here!
+      -- id recommend not using lspconfig thru lazy, instead pull down the actual repo into your config,
+      -- put all the configs you're using in the .config/nvim/lsp folder,
+      -- and make a subfolder called unused so that you don't pull a million different requires into
+      -- your nvim config
       "./lsp/unused",
     },
   },
@@ -57,8 +63,8 @@ local emmy_settings = {
 
   completion = {
     enable = true,
-    callSnippet = true,
-    -- suggests a lot of garbage, wouldn't recommend
+
+    -- suggests a lot of garbage from your installed plugins/lsp configs, wouldn't recommend
     autoRequire = false,
   },
 
@@ -105,8 +111,7 @@ local function format_json(json_str)
   local indent_size = "  " -- Use 2 spaces
 
   for i = 1, #json_str do
-    local char = json_str:sub(i, i)
-
+    local char = string.sub(json_str, i, i)
 
     if char == "\\" then
       escaped = not escaped
@@ -135,6 +140,7 @@ local function format_json(json_str)
       end
     end
   end
+
   return result
 end
 
@@ -247,13 +253,17 @@ return {
       return root
     end
 
-    local bufname = vim.api.nvim_buf_get_name(bufnr)
-    if string.find(string.sub(bufname, 1, string.len(stdconfig)), stdconfig, 1, true) then
-      root = stdconfig
-    else
-      -- if current buffer is not a child of stdconfig, then give up and just activate with no .emmyrc.json
-      on_dir(vim.fn.getcwd())
-      return vim.fn.getcwd()
+    if root == nil then
+      local bufname = vim.api.nvim_buf_get_name(bufnr)
+
+      if string.find(string.sub(bufname, 1, string.len(stdconfig)), stdconfig, 1, true) then
+        root = stdconfig
+      else
+
+        -- if current buffer is not a child of stdconfig, then give up and just activate with no .emmyrc.json
+        on_dir(vim.fn.getcwd())
+        return vim.fn.getcwd()
+      end
     end
 
     -- otherwise, update emmyrc before we start

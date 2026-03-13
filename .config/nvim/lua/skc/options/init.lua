@@ -1,16 +1,13 @@
 -- Options --
-vim.opt.termguicolors = true
-vim.opt.laststatus = 3
+vim.o.termguicolors = true
+vim.o.laststatus = 3
 
 -- Use treesitter to work out our folds
-vim.o.foldmethod = "expr"
-vim.o.foldexpr = "v:lua.vim.treesitter.foldexpr()"
 vim.o.foldlevel = 99
 vim.o.foldlevelstart = 99
-vim.o.foldenable = true
 
 -- Use treesitter to work out our indents
-vim.o.indentexpr = 'v:lua.vim.treesitter.indentexpr()'
+vim.o.indentexpr = 'v:lua.require("nvim-treesitter").indentexpr()'
 
 vim.o.wrap = false
 vim.o.updatetime = 250
@@ -73,4 +70,5 @@ vim.o.shada = "'10,/0,:100,@100,h,s100"
 
 require("skc.options.diagnostics")
 require("skc.options.neovide")
+require("skc.options.highlight")
 require("skc.options.wintitle")

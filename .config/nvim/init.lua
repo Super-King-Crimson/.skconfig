@@ -1,9 +1,11 @@
 vim.g.mapleader = " "
 vim.g.maplocalleader = "s"
+
 vim.keymap.set("", "s", "<Nop>", { silent = true, noremap = true })
-vim.keymap.set("n", "<Leader>nn", [[<cmd>exe 'e ' ..stdpath('config') ..'/init.lua'<CR>]], { desc = "Edit $MYVIMRC" })
 
 vim.g.have_nerd_font = true
+
+vim.env.PATH = vim.fn.expand("~/.nvm/versions/node/v25.8.0/bin:") .. vim.env.PATH
 
 -- oh my god i can make custom profiles
 require("skc.keymaps")
@@ -28,13 +30,16 @@ vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
   -- colorscheme that will be used when installing plugins.
-  install = { colorscheme = { "habamax" } },
-  import = "skc/plugins",
-  change_detection = { enabled = true, notify = false, },
+  install = { colorscheme = { "moonfly" } },
+  spec = {
+    { import = "skc/plugins", }
+  },
+  change_detection = { enabled = false, notify = false },
 
----@diagnostic disable-next-line - i think lazy's setup function leaks its internals by accident
+  ---@diagnostic disable-next-line - i think lazy's setup function leaks its internals by accident
 })
 
 -- Lua initialization file
 vim.g.moonflyTransparent = true
+vim.g.moonflyWinSeparator = 0
 vim.cmd.colorscheme("moonfly")

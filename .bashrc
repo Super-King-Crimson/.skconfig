@@ -1,3 +1,17 @@
+### Lazy loads
+nvm () { __lazy_nvm "$@" && nvm "$@"; }
+node () { __lazy_nvm "$@" && node "$@"; }
+npm () { __lazy_nvm "$@" && npm "$@"; }
+npx () { __lazy_nvm "$@" && npx "$@"; }
+
+__lazy_nvm() {
+	unset -f __lazy_nvm
+	unset -f nvm node npm npx
+
+	[ -s "$NVM_DIR/nvm.sh" ] && builtin source "$NVM_DIR/nvm.sh"
+	[ -s "$NVM_DIR/bash_completion" ] && builtin source "$NVM_DIR/bash_completion"
+}
+
 ### Directory shortcuts and settings
 export dt="$HOME/Desktop"
 export dl="$HOME/Downloads"
@@ -18,17 +32,6 @@ export TERMINAL="kitty"
 # for use with nvim (idk why you have to wrap it in a shell but hey it works now)
 export MANPAGER="sh -c 'nvim +Man!'"
 
-# file where marks will be saved for Man files
-export man_shada=$HOME/.manshada
-
-### always have vi be system implementation of vi
-unalias vi 2>/dev/null
-
-
-# If not running interactively, don't do anything else
-case $- in *i*) ;; *) return;; esac
-
-
 export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 
 # I alt+f4 out of windows so much so i'm writing every command
@@ -46,6 +49,13 @@ shopt -s globstar
 shopt -s checkwinsize
 shopt -s histappend
 shopt -u cdable_vars
+
+
+
+# Only continue if not running interactively
+case $- in *i*) ;; *) return;; esac
+
+
 
 # set variable identifying the chroot you work in (used in the prompt below)
 if [ -z "${debian_chroot:-}" ]; then
@@ -83,20 +93,12 @@ fi
 
 
 
-
-
-
-
 ### Keybinds
 # Ctrl + Backspace: Delete one word backward
 bind '"\C-h": backward-kill-word'
 
 # End + Delete: Delete whole line
 bind '"\e[1;2F": kill-line'
-
-
-
-
 
 
 
@@ -127,7 +129,7 @@ alias pse="ps -e -o pid,command"
 #	character classes: [a-zA-Z] (or [a-z] with -i), you can match not with ^ at beginning ([^a-z])
 alias grep='grep --color=auto -i -P'
 
-
+alias md='mdfried'
 
 cd() {
 	builtin cd "$@" && ls
@@ -153,12 +155,15 @@ clip() {
 }
 alias copy="clip"
 
+skconfig() {
+	git --git-dir="$HOME"/.skconfig --work-tree="$HOME" "$@"
+}
+builtin source /usr/share/bash-completion/completions/git
+__git_complete skconfig git
 
 # PATH modification
 export PATH="$HOME/.local/bin:$PATH"
 export NVM_DIR="$HOME/.nvm"
-
-
 
 
 ### External functions
@@ -171,48 +176,6 @@ if compgen -G "$bash_scripts_path/*.bash" >/dev/null; then
 else 
 	echo "Hey where'd your scripts go"
 fi
-
-
-### Lazy loads
-skconfig() {
-	[[ -z "$_lazy_git" ]] && __lazy_git
-	git --git-dir="$HOME"/.skconfig --work-tree="$HOME" "$@"
-}
-complete -F __lazy_git skconfig
-
-nvm () { __lazy_nvm "$@" && command nvm "$@"; }
-node () { __lazy_nvm "$@" && command node "$@"; }
-npm () { __lazy_nvm "$@" && command npm "$@"; }
-npx () { __lazy_nvm "$@" && command npx "$@"; }
-complete -F __lazy_nvm nvm
-complete -F __lazy_nvm node
-complete -F __lazy_nvm npm
-complete -F __lazy_nvm npx
-
-
-__lazy_git() {
-	# associated variable with one
-	# so you can do ! -z _lazy_git or whatever
-	unset -f __lazy_git
-	_lazy_git="yup"
-
-	builtin source /usr/share/bash-completion/completions/git
-	__git_complete skconfig git
-}
-
-__lazy_nvm() {
-	unset -f __lazy_nvm
-	unset -f nvm node npm npx
-
-	complete -r nvm
-	complete -r node
-	complete -r npm
-	complete -r npx
-
-	[ -s "$NVM_DIR/nvm.sh" ] && builtin source "$NVM_DIR/nvm.sh"
-	[ -s "$NVM_DIR/bash_completion" ] && builtin source "$NVM_DIR/bash_completion"
-}
-
 
 
 # useful info:

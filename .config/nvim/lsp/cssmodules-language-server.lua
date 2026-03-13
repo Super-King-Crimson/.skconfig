@@ -11,6 +11,7 @@
 
 ---@type vim.lsp.Config
 return {
+  -- see typescript-language-server config to see why we have to do this
   cmd = { "cssmodules-language-server" },
   filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact" },
   root_markers = { "package.json" },

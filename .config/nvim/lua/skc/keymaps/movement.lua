@@ -18,8 +18,8 @@ vim.keymap.del("o", "k")
 vim.keymap.set("", "gj", "j")
 vim.keymap.set("", "gk", "k")
 
-vim.keymap.set("", "gh", "^", { desc = "[G]o to beginning of line" })
-vim.keymap.set("", "gl", "$", { desc = "[G]o to end of line" })
+vim.keymap.set("", "gh", "g^", { desc = "[G]o to beginning of line" })
+vim.keymap.set("", "gl", "g$", { desc = "[G]o to end of line" })
 
-vim.keymap.set("", "<C-j>",  "3j")
-vim.keymap.set("", "<C-k>", "3k")
+vim.keymap.set("", "<C-j>",  "3gj")
+vim.keymap.set("", "<C-k>", "3gk")

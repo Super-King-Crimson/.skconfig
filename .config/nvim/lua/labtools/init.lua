@@ -2,8 +2,13 @@
 -- VIM.FS.FIND()
 local LabTools = {}
 
-local silent = false
+local silent = true
 local debugMode = false
+
+function LabTools.inRange(i, min, max)
+  local range = (max - min) + 1
+  return (i - min) % range + min
+end
 
 function LabTools.arrFind(haystack, needle)
   for i, hay in ipairs(haystack) do
