@@ -26,12 +26,12 @@ end
 
 local function miniFilter(fs_entry)
   for _, banned in ipairs(IGNORE_FILES) do
-    if string.find(fs_entry.name, banned, 1, true) then
+    if string.find(fs_entry.name, banned) then
       return false
     end
-
-    return true
   end
+
+  return true
 end
 
 local MiniFiles = require("mini.files")
