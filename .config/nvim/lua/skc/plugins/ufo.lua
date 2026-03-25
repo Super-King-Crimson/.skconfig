@@ -1,5 +1,5 @@
 return {
-  'kevinhwang91/nvim-ufo', 
+  'kevinhwang91/nvim-ufo',
   dependencies = {'kevinhwang91/promise-async'},
   config = function()
     local capabilities = vim.lsp.protocol.make_client_capabilities()
@@ -11,7 +11,7 @@ return {
     require("ufo").setup({
       provider_selector = function(bufnr)
         if #vim.lsp.get_clients({ bufnr = bufnr }) > 0 then
-          return {"lsp", "treesitter"}
+          return {"lsp", "indent"}
         end
 
         return {"treesitter", "indent"}

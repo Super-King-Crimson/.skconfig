@@ -1,9 +1,9 @@
 local IGNORE_FILES = {
-  "**.cs.meta",
-  "**.cs.uid",
-  "**.meta",
-  "**.asset",
-  "**.asset.meta",
+  ".cs.meta",
+  ".cs.uid",
+  ".meta",
+  ".asset",
+  ".asset.meta",
 }
 
 local function miniFileToggle(from_current_buffer)
@@ -26,7 +26,7 @@ end
 
 local function miniFilter(fs_entry)
   for _, banned in ipairs(IGNORE_FILES) do
-    if string.find(fs_entry.name, vim.fn.glob2regpat(banned)) then
+    if string.find(fs_entry.name, banned, 1, true) then
       return false
     end
 
