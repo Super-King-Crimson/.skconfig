@@ -30,7 +30,7 @@ export SUDO_EDITOR="$EDITOR"
 export TERMINAL="kitty"
 
 ilab-mount() {
-	ssh -f ilab sleep 1000h
+	ssh -fN ilab
 
 	rclone mount ilab-mount: ~/Remote \
 		--vfs-cache-mode full \
@@ -41,13 +41,24 @@ ilab-mount() {
 		--vfs-read-ahead 256M \
 		--vfs-fast-fingerprint \
 		--buffer-size 32M \
-		"$@" \
-		&>/dev/null &
+		"$@" &>/dev/null &
 
 	local RCLONE_PID="$!"
+	local clean="nop"
 
-	trap "fusermount3 -uz ~/Remote; kill $RCLONE_PID 2>/dev/null; ssh -O exit ilab 2>/dev/null" EXIT INT
+	cleanup() {
+		[[ $clean == "yep" ]] && return
+		clean="yep"
+
+		fusermount3 -uz "$MOUNT_DIR" 2>/dev/null
+		kill "$RCLONE_PID" 2>/dev/null
+		ssh -O exit ilab 2>/dev/null
+		echo "hi" > proof.txt
+	}
+
+	trap cleanup EXIT
 	ssh ilab
+	cleanup
 }
 
 # for use with nvim (idk why you have to wrap it in a shell but hey it works now)
