@@ -31,8 +31,21 @@
         "input_combination": [
             {
                 "type": 1,
+                "code": 29,
+                "origin_hash": "7c32e9f592e7ebf645aa9f09f5ff27fd"
+            }
+        ],
+        "target_uinput": "keyboard",
+        "output_symbol": "set(C, 1).hold_keys(Control_L).set(C, 0)",
+        "name": "Control Toggle",
+        "mapping_type": "key_macro"
+    },
+    {
+        "input_combination": [
+            {
+                "type": 1,
                 "code": 56,
-                "origin_hash": "ab12e6bee1b9b72a6f5f236811b6a92e"
+                "origin_hash": "7c32e9f592e7ebf645aa9f09f5ff27fd"
             }
         ],
         "target_uinput": "keyboard",
@@ -45,7 +58,7 @@
             {
                 "type": 1,
                 "code": 100,
-                "origin_hash": "ab12e6bee1b9b72a6f5f236811b6a92e"
+                "origin_hash": "7c32e9f592e7ebf645aa9f09f5ff27fd"
             }
         ],
         "target_uinput": "keyboard",
@@ -57,21 +70,8 @@
         "input_combination": [
             {
                 "type": 1,
-                "code": 29,
-                "origin_hash": "ab12e6bee1b9b72a6f5f236811b6a92e"
-            }
-        ],
-        "target_uinput": "keyboard",
-        "output_symbol": "set(C, 1).hold_keys(Control_L).set(C, 0)",
-        "name": "Control Toggle",
-        "mapping_type": "key_macro"
-    },
-    {
-        "input_combination": [
-            {
-                "type": 1,
                 "code": 14,
-                "origin_hash": "ab12e6bee1b9b72a6f5f236811b6a92e"
+                "origin_hash": "7c32e9f592e7ebf645aa9f09f5ff27fd"
             }
         ],
         "target_uinput": "keyboard",
@@ -84,7 +84,7 @@
             {
                 "type": 1,
                 "code": 52,
-                "origin_hash": "ab12e6bee1b9b72a6f5f236811b6a92e"
+                "origin_hash": "7c32e9f592e7ebf645aa9f09f5ff27fd"
             }
         ],
         "target_uinput": "keyboard",
@@ -97,7 +97,7 @@
             {
                 "type": 1,
                 "code": 35,
-                "origin_hash": "ab12e6bee1b9b72a6f5f236811b6a92e"
+                "origin_hash": "7c32e9f592e7ebf645aa9f09f5ff27fd"
             }
         ],
         "target_uinput": "keyboard",
@@ -110,7 +110,7 @@
             {
                 "type": 1,
                 "code": 51,
-                "origin_hash": "ab12e6bee1b9b72a6f5f236811b6a92e"
+                "origin_hash": "7c32e9f592e7ebf645aa9f09f5ff27fd"
             }
         ],
         "target_uinput": "keyboard",
@@ -123,7 +123,7 @@
             {
                 "type": 1,
                 "code": 42,
-                "origin_hash": "ab12e6bee1b9b72a6f5f236811b6a92e"
+                "origin_hash": "7c32e9f592e7ebf645aa9f09f5ff27fd"
             }
         ],
         "target_uinput": "keyboard",
@@ -136,7 +136,7 @@
             {
                 "type": 1,
                 "code": 54,
-                "origin_hash": "ab12e6bee1b9b72a6f5f236811b6a92e"
+                "origin_hash": "7c32e9f592e7ebf645aa9f09f5ff27fd"
             }
         ],
         "target_uinput": "keyboard",
@@ -149,12 +149,12 @@
             {
                 "type": 1,
                 "code": 56,
-                "origin_hash": "ab12e6bee1b9b72a6f5f236811b6a92e"
+                "origin_hash": "7c32e9f592e7ebf645aa9f09f5ff27fd"
             },
             {
                 "type": 1,
                 "code": 35,
-                "origin_hash": "ab12e6bee1b9b72a6f5f236811b6a92e"
+                "origin_hash": "7c32e9f592e7ebf645aa9f09f5ff27fd"
             }
         ],
         "target_uinput": "keyboard",
@@ -167,12 +167,12 @@
             {
                 "type": 1,
                 "code": 56,
-                "origin_hash": "ab12e6bee1b9b72a6f5f236811b6a92e"
+                "origin_hash": "7c32e9f592e7ebf645aa9f09f5ff27fd"
             },
             {
                 "type": 1,
                 "code": 36,
-                "origin_hash": "ab12e6bee1b9b72a6f5f236811b6a92e"
+                "origin_hash": "7c32e9f592e7ebf645aa9f09f5ff27fd"
             }
         ],
         "target_uinput": "keyboard",
@@ -185,12 +185,12 @@
             {
                 "type": 1,
                 "code": 56,
-                "origin_hash": "ab12e6bee1b9b72a6f5f236811b6a92e"
+                "origin_hash": "7c32e9f592e7ebf645aa9f09f5ff27fd"
             },
             {
                 "type": 1,
                 "code": 37,
-                "origin_hash": "ab12e6bee1b9b72a6f5f236811b6a92e"
+                "origin_hash": "7c32e9f592e7ebf645aa9f09f5ff27fd"
             }
         ],
         "target_uinput": "keyboard",
@@ -203,12 +203,12 @@
             {
                 "type": 1,
                 "code": 56,
-                "origin_hash": "ab12e6bee1b9b72a6f5f236811b6a92e"
+                "origin_hash": "7c32e9f592e7ebf645aa9f09f5ff27fd"
             },
             {
                 "type": 1,
                 "code": 38,
-                "origin_hash": "ab12e6bee1b9b72a6f5f236811b6a92e"
+                "origin_hash": "7c32e9f592e7ebf645aa9f09f5ff27fd"
             }
         ],
         "target_uinput": "keyboard",

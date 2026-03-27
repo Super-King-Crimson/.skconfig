@@ -29,6 +29,27 @@ export EDITOR="$HOME/.local/bin/nvim"
 export SUDO_EDITOR="$EDITOR"
 export TERMINAL="kitty"
 
+ilab-mount() {
+	ssh -f ilab sleep 1000h
+
+	rclone mount ilab: ~/Remote \
+		--vfs-cache-mode full \
+		--vfs-cache-max-age 1000h \
+		--vfs-cache-max-size 32G \
+		--dir-cache-time 10s \
+		--attr-timeout 10s \
+		--vfs-read-ahead 256M \
+		--vfs-fast-fingerprint \
+		--buffer-size 32M \
+		"$@" \
+		&>/dev/null &
+
+	local RCLONE_PID="$!"
+
+	trap "fusermount3 -uz ~/Remote; kill $RCLONE_PID 2>/dev/null; ssh -O exit ilab 2>/dev/null" EXIT INT
+	ssh ilab
+}
+
 # for use with nvim (idk why you have to wrap it in a shell but hey it works now)
 export MANPAGER="sh -c 'nvim +Man!'"
 
@@ -103,6 +124,7 @@ bind '"\e[1;2F": kill-line'
 
 
 ### Aliases and functions
+alias mv='mv -i'
 alias ls='ls --color=auto -AF'
 # a ls-tee: prints original list while piping output
 alias la='command ls --color=auto -a'
